@@ -1,0 +1,558 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask Sir Isaac - The Wise Victorian Oracle</title>
+    <meta name="description" content="Seek wisdom from Sir Isaac Pitman, the inventor of shorthand, in this interactive Victorian oracle game. Get answers with wit, wisdom, and British charm!">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Styles -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-bounce-gentle {
+            animation: bounceGentle 1s ease-in-out;
+        }
+        
+        @keyframes bounceGentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .thinking-dots .dot {
+            animation: thinking 1.5s infinite;
+        }
+        
+        .thinking-dots .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .thinking-dots .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes thinking {
+            0%, 80%, 100% { opacity: 0.3; }
+            40% { opacity: 1; }
+        }
+        
+        .sir-isaac-image {
+            transition: transform 0.3s ease;
+        }
+        
+        .sir-isaac-image:hover {
+            transform: scale(1.05);
+        }
+        
+        .btn {
+            transition: all 0.2s ease;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background-color: #d97706;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #b45309;
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: #d97706;
+            border: 2px solid #fbbf24;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #fef3c7;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 0.75rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 2px solid #fbbf24;
+        }
+        
+        .response-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: 1px solid;
+            margin-bottom: 1rem;
+        }
+        
+        .response-affirmative {
+            background-color: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+        
+        .response-negative {
+            background-color: #fef2f2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+        
+        .response-playful {
+            background-color: #fefce8;
+            color: #a16207;
+            border-color: #fef08a;
+        }
+        
+        .response-profound {
+            background-color: #faf5ff;
+            color: #7c2d12;
+            border-color: #e9d5ff;
+        }
+        
+        .response-meta {
+            background-color: #eff6ff;
+            color: #1e40af;
+            border-color: #bfdbfe;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.125rem;
+            border: 2px solid #fbbf24;
+            border-radius: 0.375rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+        
+        .input-field:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
+        }
+        
+        .fun-fact {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 min-h-screen">
+    
+    <!-- Game Container -->
+    <div id="gameContainer" class="p-4">
+        
+        <!-- Intro Screen -->
+        <div id="introScreen" class="min-h-screen flex items-center justify-center">
+            <div class="card max-w-2xl w-full p-8 text-center">
+                <div class="mb-6">
+                    <img 
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='320' viewBox='0 0 256 320'%3E%3Crect width='256' height='320' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' font-size='14' text-anchor='middle' dy='.3em' fill='%23374151'%3ESir Isaac Image%3C/text%3E%3C/svg%3E"
+                        alt="Sir Isaac Pitman - Modern British Gentleman"
+                        class="w-64 h-auto mx-auto rounded-lg border-4 border-amber-300 shadow-lg sir-isaac-image"
+                        id="sirIsaacIntroImage"
+                    />
+                    <p class="text-xs text-gray-500 mt-2">Replace this placeholder with your Sir Isaac image</p>
+                </div>
+                <h1 class="text-3xl font-bold text-slate-800 mb-4">Ask Sir Isaac</h1>
+                <p class="text-lg text-slate-700 italic mb-6 leading-relaxed">
+                    "Ah! Good day to you, my inquisitive friend. I am Sir Isaac Pitman, master of shorthand and seeker of wisdom.
+                    Though the world has turned many pages since my time, I remain here — in miniature form — ready to offer guidance, wit, and perhaps the odd pearl of Victorian wisdom."
+                </p>
+                <p class="text-lg text-slate-700 italic mb-8 leading-relaxed">
+                    "Pose your question, tap upon my frame, and I shall ponder it with due care and a gentle stroke of my beard.
+                    Let us begin, shall we?"
+                </p>
+                <button class="btn btn-primary text-lg" onclick="startGame()">
+                    Ask Sir Isaac
+                </button>
+            </div>
+        </div>
+        
+        <!-- Main Game Screen -->
+        <div id="gameScreen" class="hidden max-w-4xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-white mb-2">Ask Sir Isaac</h1>
+                <p class="text-slate-300 text-lg">The Wise Victorian Oracle</p>
+                <span class="inline-block bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm font-medium mt-2">
+                    Questions Asked: <span id="questionCount">0</span>
+                </span>
+            </div>
+            
+            <!-- Sir Isaac Character -->
+            <div class="text-center mb-8">
+                <div id="sirIsaacContainer" class="inline-block">
+                    <img 
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='400' viewBox='0 0 320 400'%3E%3Crect width='320' height='400' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' font-size='16' text-anchor='middle' dy='.3em' fill='%23374151'%3ESir Isaac Full Body%3C/text%3E%3C/svg%3E"
+                        alt="Sir Isaac Pitman - Modern British Gentleman"
+                        class="w-80 h-auto mx-auto rounded-lg border-6 border-amber-300 shadow-2xl sir-isaac-image cursor-pointer"
+                        id="sirIsaacGameImage"
+                        onclick="clickSirIsaac()"
+                    />
+                    <p class="text-xs text-gray-400 mt-2">Replace this placeholder with your Sir Isaac image</p>
+                </div>
+                
+                <div id="thinkingIndicator" class="hidden mt-4">
+                    <p class="text-amber-300 text-lg italic">Sir Isaac is pondering...</p>
+                    <div class="flex justify-center mt-2">
+                        <div class="thinking-dots flex space-x-1">
+                            <div class="dot w-2 h-2 bg-amber-300 rounded-full"></div>
+                            <div class="dot w-2 h-2 bg-amber-300 rounded-full"></div>
+                            <div class="dot w-2 h-2 bg-amber-300 rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Question Input -->
+            <div class="card mb-8 p-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-slate-700 font-semibold mb-2">
+                            Pose your question to Sir Isaac:
+                        </label>
+                        <input
+                            type="text"
+                            id="questionInput"
+                            class="input-field"
+                            placeholder="What wisdom do you seek, dear enquirer?"
+                            onkeypress="handleKeyPress(event)"
+                        />
+                    </div>
+                    
+                    <div class="flex gap-3 justify-center">
+                        <button class="btn btn-primary" onclick="askQuestion()" id="askButton">
+                            Ask Sir Isaac
+                        </button>
+                        
+                        <button class="btn btn-secondary" onclick="resetQuestion()">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            Ask Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Response Display -->
+            <div id="responseCard" class="hidden card mb-8 p-6 animate-fade-in">
+                <div class="text-center">
+                    <div id="responseBadge" class="response-badge inline-block"></div>
+                    
+                    <blockquote class="text-xl text-slate-800 italic font-medium mb-4 leading-relaxed">
+                        "<span id="responseText"></span>"
+                    </blockquote>
+                    
+                    <p class="text-slate-600 font-semibold">— Sir Isaac Pitman</p>
+                    
+                    <div id="funFactContainer" class="hidden fun-fact">
+                        <p class="text-amber-800 italic">
+                            💡 <span id="funFactText"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer Controls -->
+            <div class="flex justify-center gap-4 mb-8">
+                <button class="btn btn-secondary text-sm" onclick="toggleSound()">
+                    <svg id="soundIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 14.142M8.5 4L6 6.5H4a1 1 0 00-1 1v5a1 1 0 001 1h2l2.5 2.5a.5.5 0 00.5-.366V4.366a.5.5 0 00-.5-.366z"></path>
+                    </svg>
+                </button>
+                
+                <button class="btn btn-secondary text-sm" onclick="showInfo()">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Who is Sir Isaac?
+                </button>
+            </div>
+            
+            <!-- Easter Egg -->
+            <div id="teaBreakContainer" class="hidden text-center">
+                <button class="btn btn-secondary" onclick="teaBreak()">
+                    ☕️ Tea Break
+                </button>
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden fixed top-4 right-4 bg-white border-l-4 border-blue-500 rounded-lg shadow-lg p-4 max-w-md">
+        <p id="toastMessage" class="text-gray-800"></p>
+    </div>
+    
+    <script>
+        // Game State
+        let questionsAsked = 0;
+        let soundEnabled = true;
+        let isThinking = false;
+        
+        // Game Responses
+        const responses = [
+            // Affirmative answers
+            { text: "Indeed so, my good friend.", type: 'affirmative' },
+            { text: "Without question.", type: 'affirmative' },
+            { text: "The signs point most favourably.", type: 'affirmative' },
+            { text: "You may proceed with confidence.", type: 'affirmative' },
+            { text: "A resounding yes!", type: 'affirmative' },
+            { text: "By all means, pursue it.", type: 'affirmative' },
+            { text: "Absolutely, as certain as the Queen's Guard.", type: 'affirmative' },
+            { text: "A wise course of action, indeed.", type: 'affirmative' },
+
+            // Negative answers
+            { text: "I would not recommend it.", type: 'negative' },
+            { text: "Alas, the answer is no.", type: 'negative' },
+            { text: "The fates do not favour this.", type: 'negative' },
+            { text: "Best to think twice, dear enquirer.", type: 'negative' },
+            { text: "Most unlikely, I'm afraid.", type: 'negative' },
+            { text: "No, not even with the best quill and ink.", type: 'negative' },
+            { text: "A most unwise pursuit.", type: 'negative' },
+            { text: "Cease this notion at once.", type: 'negative' },
+
+            // Playful / Cheeky answers
+            { text: "You expect me to know that? I'm a gentleman, not a fortune teller!", type: 'playful' },
+            { text: "My beard tingles — but I shall say no more.", type: 'playful' },
+            { text: "I would wager a fine hat on yes, but do take caution.", type: 'playful' },
+            { text: "You must ask me again, after tea.", type: 'playful' },
+            { text: "Hmm... the answer is shrouded in fog as thick as the Thames.", type: 'playful' },
+            { text: "One ought not ask such things without a cup of Earl Grey in hand.", type: 'playful' },
+            { text: "Oh! That is a question for philosophers — or cats.", type: 'playful' },
+            { text: "The shorthand of life says: go forth!", type: 'playful', funFact: "Did you know? Shorthand was once used to transcribe parliamentary debates." },
+            { text: "My monocle suggests... perhaps.", type: 'playful' },
+
+            // Profound / Timeless
+            { text: "The future is a blank page. You are its author.", type: 'profound' },
+            { text: "Patience is oft the finest answer.", type: 'profound' },
+            { text: "In seeking, you will find.", type: 'profound' },
+            { text: "Wisdom comes to those who wait.", type: 'profound' },
+            { text: "Trust in yourself, as I trust in the quill.", type: 'profound' },
+            { text: "The answer lies within you, not me.", type: 'profound' },
+            { text: "One must weigh the heart's desire against reason's counsel.", type: 'profound' },
+            { text: "Even shorthand cannot hasten destiny.", type: 'profound', funFact: "Remember: A stitch in time saves nine." },
+            { text: "Life's greatest questions are rarely answered in haste.", type: 'profound' },
+            { text: "Proceed with humility and courage.", type: 'profound' },
+
+            // Meta / Self-aware
+            { text: "Hmm... that question again? You do test my patience!", type: 'meta' },
+            { text: "You must be most persistent. Very well — no.", type: 'meta' },
+            { text: "Sir Isaac requires a brief respite. Try again shortly.", type: 'meta' },
+            { text: "Alas, my spectacles are clouded — ask again.", type: 'meta' },
+            { text: "The Oracle suggests... you have asked enough for today!", type: 'meta' }
+        ];
+        
+        const funFacts = [
+            "Did you know? In my time, it took 2 days by rail from London to Glasgow!",
+            "An ounce of discretion is worth a pound of wit.",
+            "Keep calm and mind your Ps and Qs.",
+            "The pen is indeed mightier than the sword.",
+            "Mind the gap — in your question, and in life.",
+            "Even Queen Victoria enjoyed a good mystery now and then.",
+            "Always carry a handkerchief and a wise heart.",
+            "Life's shorthand: Kindness, curiosity, and courage."
+        ];
+        
+        // Game Functions
+        function startGame() {
+            document.getElementById('introScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+        }
+        
+        function askQuestion() {
+            const questionInput = document.getElementById('questionInput');
+            const question = questionInput.value.trim();
+            
+            if (!question) {
+                showToast("Please pose a proper question, my good fellow!");
+                return;
+            }
+            
+            if (isThinking) return;
+            
+            isThinking = true;
+            
+            // Show thinking state
+            document.getElementById('thinkingIndicator').classList.remove('hidden');
+            document.getElementById('sirIsaacContainer').classList.add('animate-pulse');
+            document.getElementById('askButton').textContent = 'Pondering...';
+            document.getElementById('askButton').disabled = true;
+            document.getElementById('responseCard').classList.add('hidden');
+            
+            // Simulate thinking time
+            setTimeout(() => {
+                showResponse();
+                isThinking = false;
+                
+                // Reset UI
+                document.getElementById('thinkingIndicator').classList.add('hidden');
+                document.getElementById('sirIsaacContainer').classList.remove('animate-pulse');
+                document.getElementById('sirIsaacContainer').classList.add('animate-bounce-gentle');
+                document.getElementById('askButton').textContent = 'Ask Sir Isaac';
+                document.getElementById('askButton').disabled = false;
+                
+                // Update question count
+                questionsAsked++;
+                document.getElementById('questionCount').textContent = questionsAsked;
+                
+                // Show tea break option after 5 questions
+                if (questionsAsked >= 5) {
+                    document.getElementById('teaBreakContainer').classList.remove('hidden');
+                }
+                
+                // Remove bounce animation after a moment
+                setTimeout(() => {
+                    document.getElementById('sirIsaacContainer').classList.remove('animate-bounce-gentle');
+                }, 1000);
+                
+            }, 2000 + Math.random() * 2000);
+        }
+        
+        function showResponse() {
+            // Get random response
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            
+            // Sometimes add a random fun fact
+            if (!randomResponse.funFact && Math.random() < 0.3) {
+                randomResponse.funFact = funFacts[Math.floor(Math.random() * funFacts.length)];
+            }
+            
+            // Update response display
+            document.getElementById('responseText').textContent = randomResponse.text;
+            
+            const badge = document.getElementById('responseBadge');
+            badge.textContent = randomResponse.type.charAt(0).toUpperCase() + randomResponse.type.slice(1) + ' Wisdom';
+            badge.className = 'response-badge inline-block response-' + randomResponse.type;
+            
+            // Show fun fact if available
+            if (randomResponse.funFact) {
+                document.getElementById('funFactText').textContent = randomResponse.funFact;
+                document.getElementById('funFactContainer').classList.remove('hidden');
+            } else {
+                document.getElementById('funFactContainer').classList.add('hidden');
+            }
+            
+            // Show response card
+            document.getElementById('responseCard').classList.remove('hidden');
+        }
+        
+        function resetQuestion() {
+            document.getElementById('questionInput').value = '';
+            document.getElementById('responseCard').classList.add('hidden');
+            document.getElementById('sirIsaacContainer').classList.remove('animate-pulse', 'animate-bounce-gentle');
+        }
+        
+        function clickSirIsaac() {
+            if (!isThinking) {
+                showToast("Sir Isaac adjusts his spectacles and beckons you to proceed...");
+            }
+        }
+        
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            if (soundEnabled) {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 14.142M8.5 4L6 6.5H4a1 1 0 00-1 1v5a1 1 0 001 1h2l2.5 2.5a.5.5 0 00.5-.366V4.366a.5.5 0 00-.5-.366z"></path>';
+            } else {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>';
+            }
+        }
+        
+        function showInfo() {
+            showToast("Sir Isaac Pitman (1813-1897) was the inventor of the most widely used shorthand writing system.");
+        }
+        
+        function teaBreak() {
+            document.getElementById('responseText').textContent = "Ah, time for a proper British tea break! Earl Grey, two sugars, and perhaps a biscuit.";
+            
+            const badge = document.getElementById('responseBadge');
+            badge.textContent = 'Playful Wisdom';
+            badge.className = 'response-badge inline-block response-playful';
+            
+            document.getElementById('funFactText').textContent = "A true British gentleman never rushes his tea time. ☕️";
+            document.getElementById('funFactContainer').classList.remove('hidden');
+            document.getElementById('responseCard').classList.remove('hidden');
+            
+            document.getElementById('sirIsaacContainer').classList.add('animate-bounce-gentle');
+            setTimeout(() => {
+                document.getElementById('sirIsaacContainer').classList.remove('animate-bounce-gentle');
+            }, 1000);
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !isThinking) {
+                askQuestion();
+            }
+        }
+        
+        function showToast(message) {
+            document.getElementById('toastMessage').textContent = message;
+            document.getElementById('toast').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('toast').classList.add('hidden');
+            }, 3000);
+        }
+        
+        // Initialize game
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Ask Sir Isaac game loaded successfully!');
+        });
+    </script>
+    
+    <!-- Instructions for WordPress Integration -->
+    <!--
+    WORDPRESS INTEGRATION INSTRUCTIONS:
+    
+    1. Copy this entire HTML file content
+    2. In WordPress, create a new page or post
+    3. Switch to "Text" or "HTML" view (not Visual)
+    4. Paste this content
+    5. Replace the placeholder images with your actual Sir Isaac images:
+       - Replace both instances of the data:image/svg+xml placeholder
+       - Use your uploaded image URLs instead
+    
+    6. Optional: You can also embed this as a custom HTML block in Gutenberg editor
+    
+    IMAGE REPLACEMENT:
+    - Find: src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'..."
+    - Replace with: src="YOUR_IMAGE_URL_HERE"
+    
+    CUSTOMIZATION OPTIONS:
+    - Change colors by modifying the CSS variables in the <style> section
+    - Add more responses to the responses array
+    - Modify the fun facts in the funFacts array
+    - Adjust timing by changing the setTimeout values
+    -->
+    
+</body>
+</html>

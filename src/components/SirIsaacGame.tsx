@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -151,9 +150,9 @@ const SirIsaacGame = () => {
           <CardContent className="p-8 text-center">
             <div className="mb-6">
               <img 
-                src="/lovable-uploads/fe1964ab-475a-4ccf-a765-c3559fdfcdf9.png" 
-                alt="Sir Isaac Pitman"
-                className="w-32 h-32 mx-auto rounded-full border-4 border-amber-300 shadow-lg object-cover"
+                src="/lovable-uploads/b2bf1468-2552-425b-906a-73fc42217a62.png" 
+                alt="Sir Isaac Pitman - Modern British Gentleman"
+                className="w-64 h-auto mx-auto rounded-lg border-4 border-amber-300 shadow-lg object-cover"
               />
             </div>
             <h1 className="text-3xl font-bold text-slate-800 mb-4">Ask Sir Isaac</h1>
@@ -193,9 +192,9 @@ const SirIsaacGame = () => {
         <div className="text-center mb-8">
           <div className={`inline-block ${getMoodClass()}`}>
             <img 
-              src="/lovable-uploads/fe1964ab-475a-4ccf-a765-c3559fdfcdf9.png" 
-              alt="Sir Isaac Pitman"
-              className="w-48 h-48 mx-auto rounded-full border-6 border-amber-300 shadow-2xl object-cover cursor-pointer"
+              src="/lovable-uploads/b2bf1468-2552-425b-906a-73fc42217a62.png" 
+              alt="Sir Isaac Pitman - Modern British Gentleman"
+              className="w-80 h-auto mx-auto rounded-lg border-6 border-amber-300 shadow-2xl object-cover cursor-pointer"
               onClick={() => {
                 if (!isThinking) {
                   toast.info("Sir Isaac adjusts his spectacles and beckons you to proceed...");
