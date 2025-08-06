@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,11 +7,206 @@ import { Badge } from '@/components/ui/badge';
 import { Volume2, VolumeX, RotateCcw, Info } from 'lucide-react';
 import { toast } from 'sonner';
 
+// Mode personalities and copy
+const pitmanModePersonalities = {
+  isaac: {
+    classic: {
+      title: "Ready for Proper Career Guidance?",
+      text1: "Sir Isaac Pitman, distinguished founder of our training legacy and inventor of the revolutionary shorthand system, extends his most cordial invitation to share proper Victorian wisdom for modern professional success.",
+      text2: "Whether you seek traditional workplace guidance, time-tested career strategies, or simply fancy some distinguished counsel from Britain's most respected training pioneer, our esteemed founder shall provide the wisdom you require.",
+      ctaText: "Receive Counsel"
+    },
+    genz: {
+      title: "Ready for Some Dead Good Career Content?",
+      text1: "Sir Isaac Pitman's gone proper viral, innit! Our founder's absolutely gassed about dropping the most peng career advice that's gonna have your professional life looking bare successful, fam! 💯",
+      text2: "Whether you're looking to level up your career game, need some proper guidance to get your life sorted, or just want advice from someone who literally created an entire communication system, Isaac's about to bless you with the content that's actually peak! ✨",
+      ctaText: "Let's Get This Bread"
+    },
+    nuclear: {
+      title: "Ready for Unfiltered Career Reality?",
+      text1: "Sir Isaac Pitman doesn't mess about with pleasant platitudes or corporate waffle. The inventor of shorthand has witnessed over 185 years of career successes and failures, and he's here to deliver the brutal truths most advisors won't tell you.",
+      text2: "Whether you're tired of sugar-coated career advice, ready for someone to tell you exactly what's holding you back, or need a proper reality check about your professional prospects, Isaac's nuclear-strength wisdom will sort you out.",
+      ctaText: "Give It To Me Straight"
+    },
+    zen: {
+      title: "Ready for Enlightened Career Wisdom?",
+      text1: "Sir Isaac Pitman, having achieved perfect harmony between Victorian innovation and cosmic consciousness, now shares the ancient secrets of professional enlightenment from his meditation garden of career wisdom.",
+      text2: "Whether you seek to align your career path with universal purpose, discover your true professional calling through mindful reflection, or simply wish to receive guidance from one who has transcended conventional business thinking, let Isaac guide your spiritual career journey.",
+      ctaText: "Begin the Journey"
+    },
+    oracle: {
+      title: "Ready for Cosmic Career Destiny?",
+      text1: "Sir Isaac Pitman, having transcended the earthly realm to become the all-knowing Oracle of Professional Destiny, peers through the cosmic mists of time to reveal the career secrets written in the stars themselves.",
+      text2: "Whether you seek to understand your professional destiny written in the astral planes, wish to unlock the cosmic forces that guide career success, or desire wisdom from one who has witnessed all possible career timelines across infinite dimensions, the Oracle awaits your approach.",
+      ctaText: "Consult the Oracle"
+    },
+    startup: {
+      title: "Ready to Disrupt Your Career Trajectory?",
+      text1: "Sir Isaac Pitman didn't just invent shorthand — he bloody well disrupted the entire communication industry and built a training empire that's still scaling after 185+ years. Now this leather-clad maverick is here to help you pivot your career strategy toward unicorn-level success.",
+      text2: "Whether you're ready to bootstrap your professional journey, need a co-founder's perspective on building your personal brand empire, or want advice from someone who literally founded an industry that's still generating revenue streams today, Isaac's startup wisdom will help you scale to the next level.",
+      ctaText: "Let's Disrupt This"
+    }
+  },
+  paul: {
+    classic: {
+      title: "Ready for Marathon-Level Career Wisdom?",
+      text1: "Paul Lewis, Managing Director and Marathon Man, combines business expertise with athletic discipline to deliver career advice that goes the distance.",
+      text2: "Whether you need training guidance, professional development tips, or just want to hear from someone who never misses a personal best, Paul's your man.",
+      ctaText: "Start the Journey"
+    },
+    genz: {
+      title: "Ready for Some Dead Good Marathon Content?",
+      text1: "Paul Lewis is absolutely gassed about this, bruv! 🏃‍♂️ The Managing Director who's literally smashed over 100 marathons is here to drop the most peng career advice that's gonna have your professional life looking bare successful, fam! 💯",
+      text2: "Whether you're looking to proper sort your career goals, need some dead good guidance to get your life on track, or just want advice from someone who's never missed a graduation ceremony OR a personal best, Paul's about to bless you with the performance that's actually peak! ✨",
+      ctaText: "Let's Smash This"
+    },
+    nuclear: {
+      title: "Ready for Brutal Marathon Reality?",
+      text1: "Paul Lewis doesn't mess about with participation medals or feel-good nonsense. After running over 100 marathons and leading Pitman Training for years, he's here to deliver the unfiltered truth about what it really takes to go the distance in your career.",
+      text2: "Whether you're tired of motivational fluff, ready for someone to tell you exactly why you're not hitting your professional targets, or need a proper reality check about your commitment levels, Paul's marathon-tested wisdom will push you past your limits.",
+      ctaText: "Push Me to My Limits"
+    },
+    zen: {
+      title: "Ready for Mindful Marathon Wisdom?",
+      text1: "Paul Lewis, having found perfect balance between the meditative rhythm of countless early morning runs and the zen of business leadership, now shares the ancient secrets of professional endurance from his place of inner marathon peace.",
+      text2: "Whether you seek to align your career journey with the steady rhythm of sustainable success, discover your true professional pace through mindful progression, or simply wish to receive guidance from one who has found harmony between athletic and business achievement, let Paul guide your mindful career marathon.",
+      ctaText: "Find Your Rhythm"
+    },
+    oracle: {
+      title: "Ready for Marathon Destiny Wisdom?",
+      text1: "Paul Lewis, having transcended the earthly realm of ordinary business leadership to become the Cosmic Marathon Oracle, channels the mystical energies of endurance and achievement to reveal the career secrets written in the footsteps of destiny.",
+      text2: "Whether you seek to understand your professional marathon written in the astral training plans, wish to unlock the cosmic forces that guide long-distance career success, or desire wisdom from one who has witnessed all possible finish lines across infinite professional dimensions, the Marathon Oracle awaits.",
+      ctaText: "Consult the Marathon Oracle"
+    },
+    startup: {
+      title: "Ready to Scale Your Career Like a Unicorn Marathon?",
+      text1: "Paul Lewis didn't just run 100+ marathons — he bloody well disrupted the entire concept of endurance whilst scaling Pitman Training's empire for decades. Now this entrepreneurial athlete is here to help you pivot your career strategy with the persistence of a marathon runner and the vision of a startup founder.",
+      text2: "Whether you're ready to bootstrap your professional journey with athletic discipline, need a co-founder's perspective on building sustainable success, or want advice from someone who treats both marathons and business growth like scalable systems, Paul's startup-athlete wisdom will help you IPO your career.",
+      ctaText: "Let's Scale This Marathon"
+    }
+  }
+};
+
+// Character images
+const pitmanCharacterImages = {
+  isaac: {
+    classic: 'https://www.pitman-training.com/wp-content/uploads/2025/06/Sir-Isaac-Pitman-Hipster-and-Trendy-in-a-sharp-business-suite-sitting-in-a-brown-leather-chair-holding-his-smart-phone-scaled.jpg',
+    genz: 'https://www.pitman-training.com/wp-content/uploads/2025/06/universal_upscale_0_9fe32590-e93b-4df0-addf-d6e409251a36_0-scaled.jpg',
+    nuclear: 'https://www.pitman-training.com/wp-content/uploads/2025/06/Sir-Isaac-Pitman-goes-nuclear-mode-on-free-career-advice-to-the-UK-and-Ireland.png',
+    zen: 'https://www.pitman-training.com/wp-content/uploads/2025/06/Sir-Isaac-Pitman-Divine-and-Zen-Yogi-in-a-calm-meditation-garden.jpg',
+    oracle: 'https://www.pitman-training.com/wp-content/uploads/2025/06/Sir-Isaac-Pitman-floating-through-all-of-space-and-time-as-the-all-knowing-master-of-the-universe-scaled.jpg',
+    startup: 'https://www.pitman-training.com/wp-content/uploads/2025/06/Sir-Isaac-Pitman-creator-of-shorthand-on-a-motorcycle-driving-through-the-mountains.jpg'
+  },
+  paul: {
+    classic: 'https://www.pitman-training.com/wp-content/uploads/2025/06/Paul-Lewis-The-Marathon-Man-and-Pitman-Training-Managing-Director.png',
+    genz: 'https://www.pitman-training.com/wp-content/uploads/2025/06/Paul-prepared-for-the-elements-and-your-future.png',
+    nuclear: 'https://www.pitman-training.com/wp-content/uploads/2025/06/paul-delivering-success-on-a-bike-ride-through-the-uk.png',
+    zen: 'https://www.pitman-training.com/wp-content/uploads/2025/06/Paul-rock-climbing-picturing-success.png',
+    oracle: 'https://www.pitman-training.com/wp-content/uploads/2025/06/paul-and-sir-isaac-pitman-marathon-man.png',
+    startup: 'https://www.pitman-training.com/wp-content/uploads/2025/06/Paul-Lewis-with-Sir-Isaac-Pitman-in-Business-Mode.png'
+  }
+};
+
+// Enhanced responses
+const pitmanResponses = {
+  isaac: {
+    classic: [
+      'That\'s a splendid question, my dear fellow — the key to success lies in proper preparation and continuous learning.',
+      'In my experience, one must approach career advancement with the same precision as shorthand — methodical, consistent, and purposeful.',
+      'Ah, reminds me of my early days developing shorthand notation. Success requires dedication to mastering the fundamentals.',
+      'Most excellent query! Remember, a well-crafted CV is like elegant shorthand — efficient, clear, and impossible to ignore.',
+      'As I always say, the finest careers are built upon solid foundations of skill and character.'
+    ],
+    genz: [
+      'Bruv, that question is absolutely peng! 💯 Your career\'s about to be dead successful with that mindset, fam!',
+      'Safe! Sir Isaac here and I\'m proper gassed to drop some career wisdom that\'s gonna be bare helpful, innit! ☕',
+      'That\'s peak, that is! Your professional journey\'s about to be absolutely blessed — let\'s get this sorted! 👑',
+      'Fam said what now? I\'m here for it! Your career\'s gonna be looking peng when we\'re done! ✨',
+      'That\'s dead good thinking! I\'m proper excited to help you level up your work game, bruv! 📈'
+    ],
+    nuclear: [
+      'Right, listen up — your CV is probably rubbish, your interview skills need work, and you\'re asking the wrong questions. But here\'s the truth...',
+      'Brutal honesty time: Stop making excuses and start making progress. Here\'s what you actually need to do...',
+      'I\'m going to give it to you straight — most people fail because they\'re not willing to do the hard work. Are you different?',
+      'Harsh reality check: The job market doesn\'t owe you anything. But if you\'re willing to put in the graft, here\'s your roadmap...',
+      'No sugar-coating here — you\'re probably your own worst enemy. But that also means you\'re your own best solution...'
+    ],
+    zen: [
+      'Ah, young grasshopper, the path to career enlightenment begins with understanding that the journey is the destination... 🧘‍♂️',
+      'In the garden of professional growth, patience cultivates the most beautiful opportunities. Your career will bloom when the season is right... 🌸',
+      'The wise professional knows that every setback is simply the universe redirecting you toward your true calling... ✨',
+      'Like the bamboo that bends in the wind but never breaks, a resilient career adapts whilst maintaining its core strength... 🎋',
+      'The stillness of meditation teaches us that sometimes the most productive action is thoughtful inaction. Consider your next step carefully... 🤔'
+    ],
+    oracle: [
+      'The cosmic winds whisper of great professional transformation ahead... The stars align in your favour, seeker... ⭐',
+      'I gaze into the crystal ball of your career future and see... multiple pathways converging toward success. Choose wisely... 🔮',
+      'The ancient runes of professional destiny spell out a message: Your greatest strength lies hidden in what you perceive as weakness... 🌟',
+      'The universe conspires in mysterious ways, dear one. That which appears as a setback is actually cosmic redirection... 🌌',
+      'I sense a disturbance in the professional force field around you... Great change approaches from an unexpected direction... 💫'
+    ],
+    startup: [
+      'Mate, that\'s the kind of question that separates the entrepreneurs from the employees! Time to disrupt your own career trajectory! 🚀',
+      'Bloody brilliant! You\'re thinking like a startup founder — question everything, iterate quickly, and pivot when necessary! 💡',
+      'That\'s what I call hustle mentality! In the startup world, that question would be worth millions. Here\'s your competitive advantage... 📈',
+      'Pure entrepreneurial energy! You\'re not just looking for a job, you\'re building a personal brand empire! 👑',
+      'Savage question! You\'re thinking like a unicorn founder — that\'s the mindset that builds billion-pound companies! 🦄'
+    ]
+  },
+  paul: {
+    classic: [
+      'Your career is like a marathon — pace yourself, stay consistent, and focus on the finish line! Our Pitman Training diplomas provide the endurance you need.',
+      'At Pitman Training, we\'ve helped thousands cross their career finish line. What\'s your next milestone? Our diplomas could be your perfect training plan.',
+      'Success isn\'t about speed, it\'s about endurance. Keep building those skills with proper qualifications — that\'s the Pitman way!',
+      'Every career setback is just training for your comeback. Trust the process, and consider a Pitman diploma to strengthen your foundation!',
+      'Like marathon training, career development requires dedication, consistency, and the right coaching. That\'s exactly what our courses provide.'
+    ],
+    genz: [
+      'Bruv, your career journey is giving proper marathon energy! 🏃‍♂️ Let\'s get you that qualification that\'s actually peng!',
+      'Safe! Paul here and your professional era\'s about to be dead good! Our diplomas are literally the career cheat code, fam! 💯',
+      'That\'s peak thinking! I\'m proper gassed because our students are absolutely smashing it! 🎓',
+      'Your career\'s about to be blessed — and our Pitman courses are the main character moment you need, innit! ✨',
+      'Fam said career advice? I\'m here for it! Running marathons AND building careers — that\'s the ultimate flex, bruv! 💪'
+    ],
+    nuclear: [
+      'Right, brutal truth time: Most people treat their careers like a casual jog when they should be marathon training. Are you ready to commit?',
+      'Listen up — I\'ve run over 100 marathons because I don\'t mess about with half-measures. Your career deserves the same dedication.',
+      'Harsh reality: While you\'re making excuses, others are getting qualified. Our diplomas exist because results matter, not intentions.',
+      'No sugar-coating: The job market is competitive as hell. You need proper qualifications, not just wishful thinking.',
+      'Blunt assessment: I didn\'t become Managing Director by accident. It took training, qualifications, and relentless improvement.'
+    ],
+    zen: [
+      'Like the steady rhythm of footsteps over 42.2 kilometres, your career path requires patient, mindful progression... 🏃‍♂️',
+      'In the marathon of professional life, each qualification is a milestone that brings inner peace and outer success... 🧘‍♂️',
+      'The wise runner knows that the longest journey begins with proper preparation — just as careers begin with proper training... 🌸',
+      'As the early morning mist clears during my 5am runs, so too will your career path become clear with the right guidance... 🌅',
+      'In the balance between effort and flow lies the secret to both marathon success and professional fulfilment... ⚖️'
+    ],
+    oracle: [
+      'The cosmic energies reveal a convergence of athletic discipline and professional destiny in your future... 🌌',
+      'I peer through the mists of time and see your career path illuminated by the achievements of proper training... 🔮',
+      'The mystical forces whisper that your professional transformation requires the same dedication as marathon training... ⭐',
+      'The ancient wisdom of persistence speaks through every kilometre run and every student graduated... 💫',
+      'The ethereal realms show me visions of your success — it begins with the sacred act of proper qualification... 🌟'
+    ],
+    startup: [
+      'Mate, that\'s proper disruptor thinking! Running marathons is like building startups — both require insane dedication and iteration! 🚀',
+      'Bloody brilliant question! You\'re thinking like a unicorn founder — scaling personal performance is just like scaling businesses! 💡',
+      'That\'s giving me serious entrepreneur energy! I\'ve been disrupting the training industry while disrupting my personal bests! 🏃‍♂️',
+      'Savage insight! You\'re not just asking about careers — you\'re architecting your professional disruption strategy! 📈',
+      'Absolutely mental approach! While others jog, I sprint marathons — while others get jobs, you should build empires! 💪'
+    ]
+  }
+};
+
 interface GameResponse {
   text: string;
   type: 'affirmative' | 'negative' | 'playful' | 'profound' | 'meta';
   funFact?: string;
 }
+
+type Character = 'isaac' | 'paul';
+type Mode = 'classic' | 'genz' | 'nuclear' | 'zen' | 'oracle' | 'startup';
 
 const SirIsaacGame = () => {
   const [question, setQuestion] = useState('');
@@ -19,75 +215,26 @@ const SirIsaacGame = () => {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [questionsAsked, setQuestionsAsked] = useState(0);
   const [showIntro, setShowIntro] = useState(true);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character>('isaac');
+  const [selectedMode, setSelectedMode] = useState<Mode>('classic');
+  const [showModeSelection, setShowModeSelection] = useState(false);
   const [sirIsaacMood, setSirIsaacMood] = useState<'waiting' | 'thinking' | 'answering'>('waiting');
-
-  const responses: GameResponse[] = [
-    // Affirmative answers
-    { text: "Indeed so, my good friend.", type: 'affirmative' },
-    { text: "Without question.", type: 'affirmative' },
-    { text: "The signs point most favourably.", type: 'affirmative' },
-    { text: "You may proceed with confidence.", type: 'affirmative' },
-    { text: "A resounding yes!", type: 'affirmative' },
-    { text: "By all means, pursue it.", type: 'affirmative' },
-    { text: "Absolutely, as certain as the Queen's Guard.", type: 'affirmative' },
-    { text: "A wise course of action, indeed.", type: 'affirmative' },
-
-    // Negative answers
-    { text: "I would not recommend it.", type: 'negative' },
-    { text: "Alas, the answer is no.", type: 'negative' },
-    { text: "The fates do not favour this.", type: 'negative' },
-    { text: "Best to think twice, dear enquirer.", type: 'negative' },
-    { text: "Most unlikely, I'm afraid.", type: 'negative' },
-    { text: "No, not even with the best quill and ink.", type: 'negative' },
-    { text: "A most unwise pursuit.", type: 'negative' },
-    { text: "Cease this notion at once.", type: 'negative' },
-
-    // Playful / Cheeky answers
-    { text: "You expect me to know that? I'm a gentleman, not a fortune teller!", type: 'playful' },
-    { text: "My beard tingles — but I shall say no more.", type: 'playful' },
-    { text: "I would wager a fine hat on yes, but do take caution.", type: 'playful' },
-    { text: "You must ask me again, after tea.", type: 'playful' },
-    { text: "Hmm... the answer is shrouded in fog as thick as the Thames.", type: 'playful' },
-    { text: "One ought not ask such things without a cup of Earl Grey in hand.", type: 'playful' },
-    { text: "Oh! That is a question for philosophers — or cats.", type: 'playful' },
-    { text: "The shorthand of life says: go forth!", type: 'playful', funFact: "Did you know? Shorthand was once used to transcribe parliamentary debates." },
-    { text: "My monocle suggests... perhaps.", type: 'playful' },
-
-    // Profound / Timeless
-    { text: "The future is a blank page. You are its author.", type: 'profound' },
-    { text: "Patience is oft the finest answer.", type: 'profound' },
-    { text: "In seeking, you will find.", type: 'profound' },
-    { text: "Wisdom comes to those who wait.", type: 'profound' },
-    { text: "Trust in yourself, as I trust in the quill.", type: 'profound' },
-    { text: "The answer lies within you, not me.", type: 'profound' },
-    { text: "One must weigh the heart's desire against reason's counsel.", type: 'profound' },
-    { text: "Even shorthand cannot hasten destiny.", type: 'profound', funFact: "Remember: A stitch in time saves nine." },
-    { text: "Life's greatest questions are rarely answered in haste.", type: 'profound' },
-    { text: "Proceed with humility and courage.", type: 'profound' },
-
-    // Meta / Self-aware
-    { text: "Hmm... that question again? You do test my patience!", type: 'meta' },
-    { text: "You must be most persistent. Very well — no.", type: 'meta' },
-    { text: "Sir Isaac requires a brief respite. Try again shortly.", type: 'meta' },
-    { text: "Alas, my spectacles are clouded — ask again.", type: 'meta' },
-    { text: "The Oracle suggests... you have asked enough for today!", type: 'meta' }
-  ];
-
-  const funFacts = [
-    "Did you know? In my time, it took 2 days by rail from London to Glasgow!",
-    "An ounce of discretion is worth a pound of wit.",
-    "Keep calm and mind your Ps and Qs.",
-    "The pen is indeed mightier than the sword.",
-    "Mind the gap — in your question, and in life.",
-    "Even Queen Victoria enjoyed a good mystery now and then.",
-    "Always carry a handkerchief and a wise heart.",
-    "Life's shorthand: Kindness, curiosity, and courage."
-  ];
 
   const askQuestion = async () => {
     if (!question.trim()) {
-      toast.error("Please pose a proper question, my good fellow!");
+      const characterNames = { isaac: 'Sir Isaac', paul: 'Paul Lewis' };
+      toast.error(`Please pose a proper question to ${characterNames[selectedCharacter]}, my good fellow!`);
       return;
+    }
+
+    // Check for Easter eggs
+    const lowerQuestion = question.toLowerCase();
+    const paulTriggers = ['paul', 'paul lewis', 'managing director'];
+    const triggeredPaulMode = paulTriggers.some(trigger => lowerQuestion.includes(trigger));
+
+    if (triggeredPaulMode && selectedCharacter !== 'paul') {
+      setSelectedCharacter('paul');
+      toast.success('🏃‍♂️ EASTER EGG ACTIVATED! Paul Lewis - The Marathon Man has entered the chat! 🏃‍♂️');
     }
 
     setIsThinking(true);
@@ -97,21 +244,20 @@ const SirIsaacGame = () => {
     // Simulate thinking time
     await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
 
-    // Get random response
-    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-    
-    // Sometimes add a random fun fact
-    if (!randomResponse.funFact && Math.random() < 0.3) {
-      randomResponse.funFact = funFacts[Math.floor(Math.random() * funFacts.length)];
-    }
+    // Get response from appropriate character and mode
+    const availableResponses = pitmanResponses[selectedCharacter][selectedMode];
+    const randomResponse = availableResponses[Math.floor(Math.random() * availableResponses.length)];
 
-    setCurrentResponse(randomResponse);
+    setCurrentResponse({
+      text: randomResponse,
+      type: 'affirmative' // You can enhance this to detect response type
+    });
+    
     setIsThinking(false);
     setSirIsaacMood('answering');
     setQuestionsAsked(prev => prev + 1);
 
     if (soundEnabled) {
-      // Play a subtle notification sound
       const audio = new Audio('/lovable-uploads/notification.mp3');
       audio.volume = 0.3;
       audio.play().catch(() => {});
@@ -124,6 +270,27 @@ const SirIsaacGame = () => {
     setSirIsaacMood('waiting');
   };
 
+  const selectMode = (mode: Mode) => {
+    setSelectedMode(mode);
+    const modeNames = {
+      classic: 'Classic Mode',
+      genz: 'Gen Z Streamer Mode',
+      nuclear: 'Nuclear Mode',
+      zen: 'The Great Buddha Mode',
+      oracle: 'Cosmic Oracle Mode',
+      startup: 'Startup Maverick Mode'
+    };
+    toast.success(`${modeNames[mode]} selected — ${selectedCharacter === 'isaac' ? 'Sir Isaac' : 'Paul Lewis'} is ready to spill the tea!`);
+  };
+
+  const getCurrentPersonality = () => {
+    return pitmanModePersonalities[selectedCharacter][selectedMode];
+  };
+
+  const getCurrentImage = () => {
+    return pitmanCharacterImages[selectedCharacter][selectedMode];
+  };
+
   const getMoodClass = () => {
     switch (sirIsaacMood) {
       case 'thinking': return 'animate-pulse';
@@ -132,44 +299,99 @@ const SirIsaacGame = () => {
     }
   };
 
-  const getResponseTypeColor = (type: string) => {
-    switch (type) {
-      case 'affirmative': return 'bg-green-100 text-green-800 border-green-200';
-      case 'negative': return 'bg-red-100 text-red-800 border-red-200';
-      case 'playful': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'profound': return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'meta': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
   if (showIntro) {
+    const personality = getCurrentPersonality();
+    
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 flex items-center justify-center p-4">
-        <Card className="max-w-2xl w-full bg-white/95 backdrop-blur-sm shadow-2xl border-2 border-amber-200">
-          <CardContent className="p-8 text-center">
-            <div className="mb-6">
-              <img 
-                src="/lovable-uploads/b2bf1468-2552-425b-906a-73fc42217a62.png" 
-                alt="Sir Isaac Pitman - Modern British Gentleman"
-                className="w-64 h-auto mx-auto rounded-lg border-4 border-amber-300 shadow-lg object-cover"
-              />
-            </div>
-            <h1 className="text-3xl font-bold text-slate-800 mb-4">Ask Sir Isaac</h1>
-            <p className="text-lg text-slate-700 italic mb-6 leading-relaxed">
-              "Ah! Good day to you, my inquisitive friend. I am Sir Isaac Pitman, master of shorthand and seeker of wisdom.
-              Though the world has turned many pages since my time, I remain here — in miniature form — ready to offer guidance, wit, and perhaps the odd pearl of Victorian wisdom.
-            </p>
-            <p className="text-lg text-slate-700 italic mb-8 leading-relaxed">
-              Pose your question, tap upon my frame, and I shall ponder it with due care and a gentle stroke of my beard.
-              Let us begin, shall we?"
-            </p>
-            <Button 
-              onClick={() => setShowIntro(false)}
-              className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 text-lg font-semibold"
-            >
-              Ask Sir Isaac
-            </Button>
+        <Card className="max-w-4xl w-full bg-white/95 backdrop-blur-sm shadow-2xl border-2 border-amber-200">
+          <CardContent className="p-8">
+            {!showModeSelection ? (
+              // Initial intro screen
+              <div className="text-center">
+                <div className="mb-6">
+                  <img 
+                    src={getCurrentImage()}
+                    alt={`${selectedCharacter === 'isaac' ? 'Sir Isaac Pitman' : 'Paul Lewis'} ready to help`}
+                    className="w-64 h-auto mx-auto rounded-lg border-4 border-amber-300 shadow-lg object-cover"
+                  />
+                </div>
+                <h1 className="text-3xl font-bold text-slate-800 mb-4">{personality.title}</h1>
+                <p className="text-lg text-slate-700 italic mb-6 leading-relaxed">
+                  {personality.text1}
+                </p>
+                <p className="text-lg text-slate-700 italic mb-8 leading-relaxed">
+                  {personality.text2}
+                </p>
+                
+                {/* Character Selection */}
+                <div className="mb-6">
+                  <h3 className="text-xl font-semibold text-slate-800 mb-4">Choose Your Advisor:</h3>
+                  <div className="flex gap-4 justify-center">
+                    <Button
+                      onClick={() => setSelectedCharacter('isaac')}
+                      variant={selectedCharacter === 'isaac' ? 'default' : 'outline'}
+                      className={selectedCharacter === 'isaac' ? 'bg-amber-600 hover:bg-amber-700' : 'border-amber-300 text-amber-700 hover:bg-amber-50'}
+                    >
+                      Sir Isaac Pitman
+                    </Button>
+                    <Button
+                      onClick={() => setSelectedCharacter('paul')}
+                      variant={selectedCharacter === 'paul' ? 'default' : 'outline'}
+                      className={selectedCharacter === 'paul' ? 'bg-amber-600 hover:bg-amber-700' : 'border-amber-300 text-amber-700 hover:bg-amber-50'}
+                    >
+                      Paul Lewis
+                    </Button>
+                  </div>
+                </div>
+                
+                <Button 
+                  onClick={() => setShowModeSelection(true)}
+                  className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 text-lg font-semibold"
+                >
+                  Choose Your Mode
+                </Button>
+              </div>
+            ) : (
+              // Mode selection screen
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-slate-800 mb-6">
+                  Choose {selectedCharacter === 'isaac' ? 'Sir Isaac\'s' : 'Paul\'s'} Personality Mode
+                </h2>
+                
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                  {(['classic', 'genz', 'nuclear', 'zen', 'oracle', 'startup'] as Mode[]).map((mode) => (
+                    <Button
+                      key={mode}
+                      onClick={() => selectMode(mode)}
+                      variant={selectedMode === mode ? 'default' : 'outline'}
+                      className={`p-4 h-auto flex flex-col ${
+                        selectedMode === mode 
+                          ? 'bg-amber-600 hover:bg-amber-700 text-white' 
+                          : 'border-amber-300 text-amber-700 hover:bg-amber-50'
+                      }`}
+                    >
+                      <span className="font-semibold capitalize">{mode}</span>
+                      <span className="text-sm mt-1 opacity-80">
+                        {mode === 'genz' && '💯 Viral Energy'}
+                        {mode === 'nuclear' && '💥 Brutal Truth'}
+                        {mode === 'zen' && '🧘‍♂️ Mindful Wisdom'}
+                        {mode === 'oracle' && '🔮 Cosmic Guidance'}
+                        {mode === 'startup' && '🚀 Disruptor Mode'}
+                        {mode === 'classic' && '🎩 Traditional Wisdom'}
+                      </span>
+                    </Button>
+                  ))}
+                </div>
+                
+                <Button 
+                  onClick={() => setShowIntro(false)}
+                  className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 text-lg font-semibold"
+                >
+                  {getCurrentPersonality().ctaText}
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -181,23 +403,31 @@ const SirIsaacGame = () => {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Ask Sir Isaac</h1>
-          <p className="text-slate-300 text-lg">The Wise Victorian Oracle</p>
-          <Badge variant="secondary" className="mt-2">
+          <h1 className="text-4xl font-bold text-white mb-2">
+            Ask {selectedCharacter === 'isaac' ? 'Sir Isaac' : 'Paul Lewis'}
+          </h1>
+          <p className="text-slate-300 text-lg">
+            {selectedCharacter === 'isaac' ? 'The Wise Victorian Oracle' : 'The Marathon Man & Managing Director'}
+          </p>
+          <Badge variant="secondary" className="mt-2 mr-2">
             Questions Asked: {questionsAsked}
+          </Badge>
+          <Badge variant="secondary" className="mt-2">
+            Mode: {selectedMode.charAt(0).toUpperCase() + selectedMode.slice(1)}
           </Badge>
         </div>
 
-        {/* Sir Isaac Character */}
+        {/* Character Display */}
         <div className="text-center mb-8">
           <div className={`inline-block ${getMoodClass()}`}>
             <img 
-              src="/lovable-uploads/b2bf1468-2552-425b-906a-73fc42217a62.png" 
-              alt="Sir Isaac Pitman - Modern British Gentleman"
+              src={getCurrentImage()}
+              alt={`${selectedCharacter === 'isaac' ? 'Sir Isaac Pitman' : 'Paul Lewis'} in ${selectedMode} mode`}
               className="w-80 h-auto mx-auto rounded-lg border-6 border-amber-300 shadow-2xl object-cover cursor-pointer"
               onClick={() => {
                 if (!isThinking) {
-                  toast.info("Sir Isaac adjusts his spectacles and beckons you to proceed...");
+                  const characterNames = { isaac: 'Sir Isaac', paul: 'Paul Lewis' };
+                  toast.info(`${characterNames[selectedCharacter]} adjusts their spectacles and beckons you to proceed...`);
                 }
               }}
             />
@@ -206,7 +436,7 @@ const SirIsaacGame = () => {
           {isThinking && (
             <div className="mt-4">
               <p className="text-amber-300 text-lg italic animate-pulse">
-                Sir Isaac is pondering...
+                {selectedCharacter === 'isaac' ? 'Sir Isaac' : 'Paul Lewis'} is pondering...
               </p>
               <div className="flex justify-center mt-2">
                 <div className="flex space-x-1">
@@ -225,7 +455,7 @@ const SirIsaacGame = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-slate-700 font-semibold mb-2">
-                  Pose your question to Sir Isaac:
+                  Pose your question to {selectedCharacter === 'isaac' ? 'Sir Isaac' : 'Paul Lewis'}:
                 </label>
                 <Input
                   value={question}
@@ -243,7 +473,7 @@ const SirIsaacGame = () => {
                   disabled={isThinking || !question.trim()}
                   className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 font-semibold"
                 >
-                  {isThinking ? 'Pondering...' : 'Ask Sir Isaac'}
+                  {isThinking ? 'Pondering...' : (selectedCharacter === 'isaac' ? 'Spill the Tea ☕' : 'Get Marathon Wisdom 🏃‍♂️')}
                 </Button>
                 
                 <Button 
@@ -264,15 +494,17 @@ const SirIsaacGame = () => {
           <Card className="mb-8 bg-white/95 backdrop-blur-sm shadow-xl border-2 border-amber-200 animate-fade-in">
             <CardContent className="p-6">
               <div className="text-center">
-                <Badge className={`mb-4 ${getResponseTypeColor(currentResponse.type)}`}>
-                  {currentResponse.type.charAt(0).toUpperCase() + currentResponse.type.slice(1)} Wisdom
+                <Badge className="mb-4 bg-green-100 text-green-800 border-green-200">
+                  {selectedMode.charAt(0).toUpperCase() + selectedMode.slice(1)} Wisdom
                 </Badge>
                 
                 <blockquote className="text-xl text-slate-800 italic font-medium mb-4 leading-relaxed">
                   "{currentResponse.text}"
                 </blockquote>
                 
-                <p className="text-slate-600 font-semibold">— Sir Isaac Pitman</p>
+                <p className="text-slate-600 font-semibold">
+                  — {selectedCharacter === 'isaac' ? 'Sir Isaac Pitman' : 'Paul Lewis'}
+                </p>
                 
                 {currentResponse.funFact && (
                   <div className="mt-6 p-4 bg-amber-50 border-l-4 border-amber-400 rounded-r-lg">
@@ -298,35 +530,27 @@ const SirIsaacGame = () => {
           </Button>
           
           <Button
-            onClick={() => toast.info("Sir Isaac Pitman (1813-1897) was the inventor of the most widely used shorthand writing system.")}
+            onClick={() => toast.info(selectedCharacter === 'isaac' 
+              ? "Sir Isaac Pitman (1813-1897) was the inventor of the most widely used shorthand writing system."
+              : "Paul Lewis is the Managing Director of Pitman Training and has completed over 100 marathons!"
+            )}
             variant="outline"
             size="sm"
             className="border-slate-400 text-slate-300 hover:bg-slate-700"
           >
             <Info className="w-4 h-4 mr-2" />
-            Who is Sir Isaac?
+            Who is {selectedCharacter === 'isaac' ? 'Sir Isaac' : 'Paul Lewis'}?
+          </Button>
+
+          <Button
+            onClick={() => setShowModeSelection(true)}
+            variant="outline"
+            size="sm"
+            className="border-slate-400 text-slate-300 hover:bg-slate-700"
+          >
+            Change Mode
           </Button>
         </div>
-
-        {/* Easter Egg */}
-        {questionsAsked >= 5 && (
-          <div className="text-center mt-8">
-            <Button
-              onClick={() => {
-                setCurrentResponse({
-                  text: "Ah, time for a proper British tea break! Earl Grey, two sugars, and perhaps a biscuit.",
-                  type: 'playful',
-                  funFact: "A true British gentleman never rushes his tea time. ☕️"
-                });
-                setSirIsaacMood('answering');
-              }}
-              variant="outline"
-              className="border-amber-300 text-amber-300 hover:bg-amber-900/20"
-            >
-              ☕️ Tea Break
-            </Button>
-          </div>
-        )}
       </div>
     </div>
   );
