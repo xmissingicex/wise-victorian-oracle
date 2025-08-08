@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,6 +37,7 @@ const SkillGapAnalyzer = () => {
   const [showForm, setShowForm] = useState(true);
   const [showCEOPortal, setShowCEOPortal] = useState(false);
   const [showCEOShrine, setShowCEOShrine] = useState(false);
+  const [showPaulLewisPortal, setShowPaulLewisPortal] = useState(false);
 
   // Pitman Training courses database
   const trainingCourses = {
@@ -46,13 +46,13 @@ const SkillGapAnalyzer = () => {
     'Data Analysis': 'Excel, Power BI, and basic data interpretation skills',
     'Customer Service Excellence': 'Communication, conflict resolution, and customer retention',
     'Microsoft Office Suite': 'Advanced Word, Excel, PowerPoint, and Outlook proficiency',
-    'Business Administration': 'Operations, finance basics, and organizational skills',
+    'Business Administration': 'Operations, finance basics, and organisational skills',
     'Sales Techniques': 'Lead generation, negotiation, and closing strategies',
     'Leadership & Management': 'Team building, delegation, and strategic thinking',
     'Bookkeeping & Accounting': 'Financial records, basic accounting principles',
     'Web Design Fundamentals': 'HTML, CSS, and modern design principles',
     'Communication Skills': 'Presentation, writing, and interpersonal communication',
-    'Time Management': 'Productivity techniques and organizational systems'
+    'Time Management': 'Productivity techniques and organisational systems'
   };
 
   const analyzeSkillGap = async () => {
@@ -67,13 +67,22 @@ const SkillGapAnalyzer = () => {
     await new Promise(resolve => setTimeout(resolve, 3000));
 
     // Check for CEO Easter egg
-    const question = `${formData.jobTitle} ${formData.desiredRole} ${formData.currentSkills}`.toLowerCase();
+    const question = `${formData.jobTitle} ${formData.desiredRole} ${formData.currentSkills} ${formData.firstName} ${formData.lastName}`.toLowerCase();
+    
     const ceoTriggers = ['darryl', 'darryl simsovic', 'ceo', 'launchlife ceo', 'launchlife'];
+    const paulLewisTriggers = ['paul', 'paul lewis', 'managing director'];
     
     const triggeredCEOMode = ceoTriggers.some(trigger => question.includes(trigger));
+    const triggeredPaulLewisMode = paulLewisTriggers.some(trigger => question.includes(trigger));
     
     if (triggeredCEOMode) {
       setShowCEOPortal(true);
+      setIsAnalyzing(false);
+      return;
+    }
+
+    if (triggeredPaulLewisMode) {
+      setShowPaulLewisPortal(true);
       setIsAnalyzing(false);
       return;
     }
@@ -117,6 +126,7 @@ const SkillGapAnalyzer = () => {
     setShowForm(true);
     setShowCEOPortal(false);
     setShowCEOShrine(false);
+    setShowPaulLewisPortal(false);
     setFormData({
       jobTitle: '',
       industry: '',
@@ -131,13 +141,13 @@ const SkillGapAnalyzer = () => {
     });
   };
 
-  const getScoreColor = (score: number) => {
+  const getScoreColour = (score: number) => {
     if (score >= 80) return 'text-green-700';
     if (score >= 60) return 'text-orange-600';
     return 'text-red-600';
   };
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityColour = (priority: string) => {
     switch (priority) {
       case 'high': return 'bg-red-50 text-red-800 border border-red-200';
       case 'medium': return 'bg-orange-50 text-orange-800 border border-orange-200';
@@ -249,6 +259,86 @@ const SkillGapAnalyzer = () => {
     );
   }
 
+  // Paul Lewis Portal Component
+  if (showPaulLewisPortal) {
+    return (
+      <div className="min-h-screen" style={{ 
+        background: 'linear-gradient(135deg, #005399 0%, #9BC53D 100%)', 
+        fontFamily: 'Gotham, sans-serif' 
+      }}>
+        <div className="min-h-screen flex items-center justify-center p-4">
+          <div className="bg-white p-12 shadow-2xl max-w-4xl w-full text-center" style={{ border: '4px solid #005399' }}>
+            <div className="mb-8">
+              <h1 className="text-5xl font-bold mb-4" style={{ color: '#005399' }}>
+                🎩 PAUL LEWIS PORTAL ACTIVATED 🎩
+              </h1>
+              <p className="text-2xl" style={{ color: '#9BC53D' }}>Managing Director Excellence Mode Engaged</p>
+            </div>
+            
+            <div className="bg-gray-50 p-8 mb-8" style={{ border: '2px solid #005399' }}>
+              <h2 className="text-3xl font-bold mb-6" style={{ color: '#005399' }}>
+                Welcome to the Executive Suite
+              </h2>
+              <p className="text-xl mb-6" style={{ color: '#333' }}>
+                You've accessed the exclusive Managing Director portal. Paul Lewis's strategic insights await.
+              </p>
+              <div className="grid md:grid-cols-2 gap-6 mb-8">
+                <div className="p-6" style={{ backgroundColor: '#005399', color: 'white' }}>
+                  <h3 className="text-xl font-bold mb-4">Leadership Excellence</h3>
+                  <ul className="text-left space-y-2">
+                    <li>• Strategic Vision Implementation</li>
+                    <li>• Operational Excellence</li>
+                    <li>• Team Development</li>
+                    <li>• Market Innovation</li>
+                  </ul>
+                </div>
+                <div className="p-6" style={{ backgroundColor: '#9BC53D', color: 'white' }}>
+                  <h3 className="text-xl font-bold mb-4">Executive Insights</h3>
+                  <ul className="text-left space-y-2">
+                    <li>• Franchise Management</li>
+                    <li>• Business Growth Strategies</li>
+                    <li>• Educational Excellence</li>
+                    <li>• Industry Leadership</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-8 mb-8" style={{ backgroundColor: '#f8fafc', border: '2px solid #9BC53D' }}>
+              <blockquote className="text-2xl italic mb-6" style={{ color: '#005399' }}>
+                "Excellence in education transforms lives. Our commitment to learner success drives everything we do at Pitman Training."
+              </blockquote>
+              <p className="text-lg font-semibold" style={{ color: '#9BC53D' }}>
+                — Paul Lewis, Managing Director
+              </p>
+            </div>
+            
+            <div className="flex justify-center gap-6">
+              <Button 
+                onClick={resetAnalysis}
+                className="px-12 py-4 text-xl font-bold text-white"
+                style={{ backgroundColor: '#005399', fontFamily: 'Gotham, sans-serif' }}
+              >
+                Return to Skill Analysis
+              </Button>
+              <Button 
+                onClick={() => toast.success("Paul Lewis acknowledges your executive acumen!")}
+                className="px-12 py-4 text-xl font-bold"
+                style={{ 
+                  backgroundColor: '#9BC53D', 
+                  color: 'white',
+                  fontFamily: 'Gotham, sans-serif' 
+                }}
+              >
+                Executive Acknowledgement
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Results View
   if (!showForm && result) {
     return (
@@ -260,10 +350,10 @@ const SkillGapAnalyzer = () => {
           </div>
 
           {/* Overall Score */}
-          <Card className="mb-8 bg-white border-2" style={{ borderColor: '#005399' }}>
+          <Card className="mb-8 bg-white" style={{ border: '2px solid #005399' }}>
             <CardHeader className="text-center bg-gray-50">
               <CardTitle className="text-3xl" style={{ color: '#005399' }}>Overall Match Score</CardTitle>
-              <div className={`text-7xl font-bold ${getScoreColor(result.overallScore)}`}>
+              <div className={`text-7xl font-bold ${getScoreColour(result.overallScore)}`}>
                 {result.overallScore}%
               </div>
               <Progress value={result.overallScore} className="w-full max-w-md mx-auto mt-6" />
@@ -272,7 +362,7 @@ const SkillGapAnalyzer = () => {
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
             {/* Strengths */}
-            <Card className="bg-white border-2" style={{ borderColor: '#9BC53D' }}>
+            <Card className="bg-white" style={{ border: '2px solid #9BC53D' }}>
               <CardHeader style={{ backgroundColor: '#f0f9ff' }}>
                 <CardTitle className="flex items-center gap-3" style={{ color: '#9BC53D' }}>
                   <CheckCircle className="w-6 h-6" />
@@ -292,7 +382,7 @@ const SkillGapAnalyzer = () => {
             </Card>
 
             {/* Skill Gaps */}
-            <Card className="bg-white border-2" style={{ borderColor: '#D2691E' }}>
+            <Card className="bg-white" style={{ border: '2px solid #D2691E' }}>
               <CardHeader style={{ backgroundColor: '#fff7ed' }}>
                 <CardTitle className="flex items-center gap-3" style={{ color: '#D2691E' }}>
                   <XCircle className="w-6 h-6" />
@@ -313,7 +403,7 @@ const SkillGapAnalyzer = () => {
           </div>
 
           {/* Recommendations */}
-          <Card className="mb-12 bg-white border-2" style={{ borderColor: '#005399' }}>
+          <Card className="mb-12 bg-white" style={{ border: '2px solid #005399' }}>
             <CardHeader style={{ backgroundColor: '#f8fafc' }}>
               <CardTitle className="flex items-center gap-3 text-2xl" style={{ color: '#005399' }}>
                 <BookOpen className="w-6 h-6" />
@@ -323,10 +413,10 @@ const SkillGapAnalyzer = () => {
             <CardContent className="pt-8">
               <div className="space-y-6">
                 {result.recommendations.map((rec, index) => (
-                  <div key={index} className="p-6 border-2 border-gray-200 bg-gray-50">
+                  <div key={index} className="p-6 bg-gray-50" style={{ border: '2px solid #E5E7EB' }}>
                     <div className="flex items-start justify-between mb-4">
                       <h3 className="font-bold text-xl" style={{ color: '#005399' }}>{rec.course}</h3>
-                      <Badge className={getPriorityColor(rec.priority)}>
+                      <Badge className={getPriorityColour(rec.priority)}>
                         {rec.priority} priority
                       </Badge>
                     </div>
@@ -344,7 +434,7 @@ const SkillGapAnalyzer = () => {
           </Card>
 
           {/* Sir Isaac's Advice */}
-          <Card className="mb-12 bg-white border-2" style={{ borderColor: '#005399' }}>
+          <Card className="mb-12 bg-white" style={{ border: '2px solid #005399' }}>
             <CardContent className="p-8 text-center">
               <img 
                 src="/lovable-uploads/b2bf1468-2552-425b-906a-73fc42217a62.png" 
@@ -353,7 +443,7 @@ const SkillGapAnalyzer = () => {
               />
               <blockquote className="text-xl italic text-gray-700 mb-6">
                 "Excellence in one's profession comes not from natural talent alone, but from dedicated study and continuous improvement. 
-                Your journey toward mastery begins with a single step — and the proper training, of course!"
+                Your journey towards mastery begins with a single step — and the proper training, of course!"
               </blockquote>
               <p className="text-gray-600 font-semibold text-lg">— Sir Isaac Pitman</p>
             </CardContent>
@@ -363,10 +453,10 @@ const SkillGapAnalyzer = () => {
             <Button 
               onClick={resetAnalysis}
               variant="outline"
-              className="border-2 mr-6 px-8 py-3 text-lg font-semibold"
-              style={{ borderColor: '#005399', color: '#005399' }}
+              className="mr-6 px-8 py-3 text-lg font-semibold"
+              style={{ border: '2px solid #005399', color: '#005399' }}
             >
-              Analyze Another Role
+              Analyse Another Role
             </Button>
             <Button 
               className="text-white px-8 py-3 text-lg font-semibold" 
@@ -385,21 +475,21 @@ const SkillGapAnalyzer = () => {
     <div className="min-h-screen bg-white p-4" style={{ fontFamily: 'Gotham, sans-serif' }}>
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4" style={{ color: '#005399' }}>Skill Gap Analyzer</h1>
+          <h1 className="text-5xl font-bold mb-4" style={{ color: '#005399' }}>Skill Gap Analyser</h1>
           <p className="text-xl text-gray-600">Discover your career development opportunities with professional insights</p>
         </div>
 
-        <Card className="bg-white border-2" style={{ borderColor: '#005399' }}>
+        <Card className="bg-white" style={{ border: '2px solid #005399' }}>
           <CardHeader style={{ backgroundColor: '#f8fafc' }}>
             <CardTitle className="flex items-center gap-3 text-2xl" style={{ color: '#005399' }}>
               <Target className="w-6 h-6" />
               Professional Development Analysis
             </CardTitle>
-            <p className="text-gray-600 text-lg">Complete this form for your personalized skill gap analysis and course recommendations.</p>
+            <p className="text-gray-600 text-lg">Complete this form for your personalised skill gap analysis and course recommendations.</p>
           </CardHeader>
           <CardContent className="p-8 space-y-8">
             {/* Personal Information */}
-            <div className="border-l-4 pl-6" style={{ borderColor: '#005399' }}>
+            <div className="pl-6" style={{ borderLeft: '4px solid #005399' }}>
               <h3 className="text-xl font-bold mb-4" style={{ color: '#005399' }}>Contact Information</h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
@@ -408,16 +498,18 @@ const SkillGapAnalyzer = () => {
                     placeholder="Enter your first name"
                     value={formData.firstName}
                     onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                    className="border-2 border-gray-300 focus:border-blue-500"
+                    className="focus:border-blue-500"
+                    style={{ border: '2px solid #E5E7EB' }}
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-700">Last Name *</label>
+                  <label className="text-sm font-semibold text-gray-700">Surname *</label>
                   <Input
-                    placeholder="Enter your last name"
+                    placeholder="Enter your surname"
                     value={formData.lastName}
                     onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                    className="border-2 border-gray-300 focus:border-blue-500"
+                    className="focus:border-blue-500"
+                    style={{ border: '2px solid #E5E7EB' }}
                   />
                 </div>
                 <div className="space-y-2">
@@ -427,7 +519,8 @@ const SkillGapAnalyzer = () => {
                     placeholder="your.email@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData({...formData, email: e.target.value})}
-                    className="border-2 border-gray-300 focus:border-blue-500"
+                    className="focus:border-blue-500"
+                    style={{ border: '2px solid #E5E7EB' }}
                   />
                 </div>
                 <div className="space-y-2">
@@ -436,14 +529,15 @@ const SkillGapAnalyzer = () => {
                     placeholder="Your contact number"
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                    className="border-2 border-gray-300 focus:border-blue-500"
+                    className="focus:border-blue-500"
+                    style={{ border: '2px solid #E5E7EB' }}
                   />
                 </div>
               </div>
             </div>
 
             {/* Professional Information */}
-            <div className="border-l-4 pl-6" style={{ borderColor: '#9BC53D' }}>
+            <div className="pl-6" style={{ borderLeft: '4px solid #9BC53D' }}>
               <h3 className="text-xl font-bold mb-4" style={{ color: '#9BC53D' }}>Professional Background</h3>
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 <div className="space-y-2">
@@ -455,7 +549,8 @@ const SkillGapAnalyzer = () => {
                     placeholder="e.g., Marketing Assistant"
                     value={formData.jobTitle}
                     onChange={(e) => setFormData({...formData, jobTitle: e.target.value})}
-                    className="border-2 border-gray-300 focus:border-green-500"
+                    className="focus:border-green-500"
+                    style={{ border: '2px solid #E5E7EB' }}
                   />
                 </div>
 
@@ -468,7 +563,8 @@ const SkillGapAnalyzer = () => {
                     placeholder="e.g., Digital Marketing, Healthcare"
                     value={formData.industry}
                     onChange={(e) => setFormData({...formData, industry: e.target.value})}
-                    className="border-2 border-gray-300 focus:border-green-500"
+                    className="focus:border-green-500"
+                    style={{ border: '2px solid #E5E7EB' }}
                   />
                 </div>
               </div>
@@ -479,7 +575,8 @@ const SkillGapAnalyzer = () => {
                   placeholder="e.g., 2 years, Entry level, 5+ years"
                   value={formData.experience}
                   onChange={(e) => setFormData({...formData, experience: e.target.value})}
-                  className="border-2 border-gray-300 focus:border-green-500"
+                  className="focus:border-green-500"
+                  style={{ border: '2px solid #E5E7EB' }}
                 />
               </div>
 
@@ -490,13 +587,14 @@ const SkillGapAnalyzer = () => {
                   value={formData.currentSkills}
                   onChange={(e) => setFormData({...formData, currentSkills: e.target.value})}
                   rows={4}
-                  className="border-2 border-gray-300 focus:border-green-500"
+                  className="focus:border-green-500"
+                  style={{ border: '2px solid #E5E7EB' }}
                 />
               </div>
             </div>
 
             {/* Career Goals */}
-            <div className="border-l-4 pl-6" style={{ borderColor: '#D2691E' }}>
+            <div className="pl-6" style={{ borderLeft: '4px solid #D2691E' }}>
               <h3 className="text-xl font-bold mb-4" style={{ color: '#D2691E' }}>Career Development Goals</h3>
               <div className="space-y-6">
                 <div className="space-y-2">
@@ -505,7 +603,8 @@ const SkillGapAnalyzer = () => {
                     placeholder="e.g., Digital Marketing Manager, Project Coordinator"
                     value={formData.desiredRole}
                     onChange={(e) => setFormData({...formData, desiredRole: e.target.value})}
-                    className="border-2 border-gray-300 focus:border-orange-500"
+                    className="focus:border-orange-500"
+                    style={{ border: '2px solid #E5E7EB' }}
                   />
                 </div>
 
@@ -516,7 +615,8 @@ const SkillGapAnalyzer = () => {
                     value={formData.jobRequirements}
                     onChange={(e) => setFormData({...formData, jobRequirements: e.target.value})}
                     rows={4}
-                    className="border-2 border-gray-300 focus:border-orange-500"
+                    className="focus:border-orange-500"
+                    style={{ border: '2px solid #E5E7EB' }}
                   />
                 </div>
               </div>
@@ -529,15 +629,15 @@ const SkillGapAnalyzer = () => {
                 className="text-white px-12 py-4 text-xl font-bold" 
                 style={{ backgroundColor: '#005399', fontFamily: 'Gotham, sans-serif' }}
               >
-                {isAnalyzing ? 'Analyzing Your Professional Profile...' : 'Analyze My Skills & Get Course Recommendations'}
+                {isAnalyzing ? 'Analysing Your Professional Profile...' : 'Analyse My Skills & Get Course Recommendations'}
               </Button>
             </div>
 
             {isAnalyzing && (
               <div className="text-center">
                 <div className="flex justify-center items-center gap-3">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2" style={{ borderColor: '#005399' }}></div>
-                  <span className="text-lg" style={{ color: '#005399' }}>Analyzing your professional profile and matching with our training programmes...</span>
+                  <div className="animate-spin h-6 w-6" style={{ border: '2px solid #005399', borderTop: '2px solid transparent', borderRadius: '50%' }}></div>
+                  <span className="text-lg" style={{ color: '#005399' }}>Analysing your professional profile and matching with our training programmes...</span>
                 </div>
               </div>
             )}
@@ -546,7 +646,7 @@ const SkillGapAnalyzer = () => {
 
         <div className="text-center mt-8">
           <p className="text-gray-500">
-            * Required fields. Your information will be used to provide personalized course recommendations and may be used to contact you about relevant training opportunities.
+            * Required fields. Your information will be used to provide personalised course recommendations and may be used to contact you about relevant training opportunities.
           </p>
         </div>
       </div>
