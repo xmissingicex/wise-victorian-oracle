@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -215,17 +216,6 @@ interface GameResponse {
   funFact?: string;
 }
 
-interface SkillGapResult {
-  overallScore: number;
-  strengths: string[];
-  gaps: string[];
-  recommendations: {
-    course: string;
-    reason: string;
-    priority: 'high' | 'medium' | 'low';
-  }[];
-}
-
 type Character = 'isaac' | 'paul';
 type Mode = 'classic' | 'genz' | 'nuclear' | 'zen' | 'oracle' | 'startup';
 
@@ -243,142 +233,6 @@ const SirIsaacGame = () => {
   const [sirIsaacMood, setSirIsaacMood] = useState<'waiting' | 'thinking' | 'answering'>('waiting');
   const [showCEOPortal, setShowCEOPortal] = useState(false);
   const [showCEOShrine, setShowCEOShrine] = useState(false);
-  
-  // Skill Gap Analyzer state
-  const [showSkillAnalyzer, setShowSkillAnalyzer] = useState(false);
-  const [skillFormData, setSkillFormData] = useState({
-    jobTitle: '',
-    industry: '',
-    experience: '',
-    currentSkills: '',
-    desiredRole: '',
-    jobRequirements: '',
-    name: '',
-    email: '',
-    phone: ''
-  });
-  const [skillResult, setSkillResult] = useState<SkillGapResult | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [showSkillForm, setShowSkillForm] = useState(true);
-
-  // Enhanced training courses database based on Pitman Training offerings
-  const trainingCourses = {
-    'Microsoft Office Suite': 'Master Word, Excel, PowerPoint, and Outlook with advanced proficiency',
-    'Microsoft Excel Advanced': 'Advanced Excel functions, pivot tables, and data analysis techniques',
-    'Digital Marketing': 'Social media marketing, SEO, Google Ads, and online advertising strategies',
-    'Project Management': 'Learn Agile, Scrum, and traditional project management methodologies',
-    'Business Administration': 'Operations, finance basics, organizational skills, and office management',
-    'Bookkeeping & Accounting': 'Financial records, basic accounting principles, and Sage software',
-    'AAT Qualification': 'Association of Accounting Technicians professional qualification',
-    'Legal Secretary Training': 'Specialized legal administration and documentation skills',
-    'Medical Secretary Training': 'Healthcare administration and medical terminology expertise',
-    'HR Management': 'Human resources, recruitment, and employee relations training',
-    'Communication Skills': 'Professional presentation, writing, and interpersonal communication',
-    'Web Design & Development': 'HTML, CSS, modern web design, and user experience principles',
-    'Graphic Design': 'Adobe Creative Suite, visual design, and brand development',
-    'Social Media Management': 'Content creation, platform management, and social media strategy',
-    'Customer Service Excellence': 'Communication, conflict resolution, and customer retention',
-    'Personal Development': 'Leadership skills, time management, and professional growth',
-    'Touch Typing & Speed Writing': 'Keyboard proficiency and efficient documentation skills',
-    'Sage Accounting Software': 'Comprehensive training in Sage 50 and Sage Payroll',
-    'Event Management': 'Planning, coordination, and execution of professional events',
-    'IT Support & Networks': 'Technical support, cybersecurity, and network administration'
-  };
-
-  const analyzeSkillGap = async () => {
-    if (!skillFormData.jobTitle || !skillFormData.currentSkills || !skillFormData.desiredRole || !skillFormData.name || !skillFormData.email) {
-      toast.error("Please fill in all required fields including your contact details.");
-      return;
-    }
-
-    setIsAnalyzing(true);
-    
-    // Simulate analysis time
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
-    // Enhanced analysis logic
-    const currentSkillsArray = skillFormData.currentSkills.toLowerCase().split(',').map(s => s.trim());
-    const jobReqsArray = skillFormData.jobRequirements.toLowerCase().split(',').map(s => s.trim());
-    
-    // Improved matching algorithm
-    const matchingSkills = currentSkillsArray.filter(skill => 
-      jobReqsArray.some(req => req.includes(skill) || skill.includes(req))
-    );
-    
-    const overallScore = Math.min(90, Math.max(25, (matchingSkills.length / Math.max(jobReqsArray.length, 1)) * 100 + Math.random() * 15));
-    
-    // Generate intelligent recommendations based on job requirements and industry
-    const courseKeys = Object.keys(trainingCourses);
-    const recommendations = courseKeys
-      .filter(course => {
-        const courseLower = course.toLowerCase();
-        const titleLower = skillFormData.jobTitle.toLowerCase();
-        const industryLower = skillFormData.industry.toLowerCase();
-        const reqsLower = skillFormData.jobRequirements.toLowerCase();
-        
-        // Smart matching based on job context
-        return reqsLower.includes(courseLower.split(' ')[0]) || 
-               titleLower.includes(courseLower.split(' ')[0]) ||
-               industryLower.includes(courseLower.split(' ')[0]) ||
-               (courseLower.includes('office') && (titleLower.includes('admin') || titleLower.includes('secretary'))) ||
-               (courseLower.includes('marketing') && (titleLower.includes('marketing') || industryLower.includes('marketing'))) ||
-               (courseLower.includes('accounting') && (titleLower.includes('finance') || industryLower.includes('finance')));
-      })
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 3)
-      .map((course, index) => ({
-        course,
-        reason: trainingCourses[course as keyof typeof trainingCourses],
-        priority: index === 0 ? 'high' as const : index === 1 ? 'medium' as const : 'low' as const
-      }));
-
-    // Fallback recommendations if no matches
-    if (recommendations.length === 0) {
-      recommendations.push(
-        {
-          course: 'Microsoft Office Suite',
-          reason: trainingCourses['Microsoft Office Suite'],
-          priority: 'high' as const
-        },
-        {
-          course: 'Communication Skills',
-          reason: trainingCourses['Communication Skills'],
-          priority: 'medium' as const
-        },
-        {
-          course: 'Business Administration',
-          reason: trainingCourses['Business Administration'],
-          priority: 'low' as const
-        }
-      );
-    }
-
-    const mockResult: SkillGapResult = {
-      overallScore: Math.round(overallScore),
-      strengths: matchingSkills.length > 0 ? matchingSkills.slice(0, 3) : ['Industry experience', 'Professional attitude', 'Learning mindset'],
-      gaps: jobReqsArray.length > matchingSkills.length ? 
-        jobReqsArray.filter(req => !currentSkillsArray.some(skill => skill.includes(req))).slice(0, 3) :
-        ['Advanced software skills', 'Professional qualifications', 'Industry certifications'],
-      recommendations
-    };
-
-    setSkillResult(mockResult);
-    setIsAnalyzing(false);
-    setShowSkillForm(false);
-    
-    // Store lead data (in real implementation, this would go to your CRM/database)
-    console.log('Lead captured:', {
-      name: skillFormData.name,
-      email: skillFormData.email,
-      phone: skillFormData.phone,
-      jobTitle: skillFormData.jobTitle,
-      industry: skillFormData.industry,
-      score: mockResult.overallScore,
-      recommendations: mockResult.recommendations.map(r => r.course)
-    });
-    
-    toast.success(`Analysis complete! We've identified ${mockResult.recommendations.length} perfect training opportunities for you.`);
-  };
 
   const askQuestion = async () => {
     if (!question.trim()) {
@@ -471,21 +325,6 @@ const SirIsaacGame = () => {
     }
   };
 
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    return 'text-red-600';
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
   const handleCEOClick = () => {
     const randomResponse = ceoResponses[Math.floor(Math.random() * ceoResponses.length)];
     toast.success(randomResponse);
@@ -494,32 +333,40 @@ const SirIsaacGame = () => {
   // CEO Portal Component
   const CEOPortal = () => (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className="max-w-2xl w-full bg-gradient-to-br from-amber-50 to-orange-100 border-4 border-amber-300 shadow-2xl">
+      <Card className="max-w-2xl w-full bg-gradient-to-br from-[hsl(var(--pitman-gold))] to-[hsl(var(--pitman-orange))] border-4 border-[hsl(var(--pitman-gold))] shadow-2xl">
         <CardContent className="p-8 text-center">
-          <h2 className="text-3xl font-bold text-amber-800 mb-4">👑 CEO PORTAL ACTIVATED! 👑</h2>
-          <p className="text-lg text-amber-700 mb-6">
+          <h2 className="text-3xl font-bold text-[hsl(var(--pitman-dark-blue))] mb-4" style={{ fontFamily: 'Gotham, sans-serif' }}>
+            👑 CEO PORTAL ACTIVATED! 👑
+          </h2>
+          <p className="text-lg text-[hsl(var(--pitman-dark-blue))] mb-6" style={{ fontFamily: 'Gotham, sans-serif' }}>
             Welcome to the Executive Stratosphere! You've discovered the legendary Darryl Simsovic Easter Egg!
           </p>
           <div className="mb-6">
             <img 
               src="https://www.pitman-training.com/wp-content/uploads/2023/10/Darryl-Simsovic-LaunchLife-CEO-Franchise-Expert.jpg"
               alt="Darryl Simsovic - LaunchLife CEO"
-              className="w-32 h-32 mx-auto rounded-full border-4 border-amber-300 object-cover mb-4"
+              className="w-32 h-32 mx-auto border-4 border-[hsl(var(--pitman-gold))] object-cover mb-4"
             />
-            <p className="text-amber-800 font-semibold">Darryl Simsovic - LaunchLife CEO & Franchise Whisperer</p>
-            <p className="text-amber-600 text-sm">The man who built empires across 31 countries</p>
+            <p className="text-[hsl(var(--pitman-dark-blue))] font-semibold" style={{ fontFamily: 'Gotham, sans-serif' }}>
+              Darryl Simsovic - LaunchLife CEO & Franchise Whisperer
+            </p>
+            <p className="text-[hsl(var(--pitman-dark-blue))]/70 text-sm" style={{ fontFamily: 'Gotham, sans-serif' }}>
+              The man who built empires across 31 countries
+            </p>
           </div>
           <div className="flex gap-4 justify-center">
             <Button 
               onClick={() => setShowCEOShrine(true)}
-              className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700"
+              className="bg-gradient-to-r from-[hsl(var(--pitman-orange))] to-[hsl(var(--pitman-gold))] hover:opacity-90 text-white"
+              style={{ fontFamily: 'Gotham, sans-serif' }}
             >
               Enter CEO Shrine
             </Button>
             <Button 
               onClick={() => setShowCEOPortal(false)}
               variant="outline"
-              className="border-amber-300 text-amber-700"
+              className="border-[hsl(var(--pitman-dark-blue))] text-[hsl(var(--pitman-dark-blue))] hover:bg-[hsl(var(--pitman-dark-blue))]/10"
+              style={{ fontFamily: 'Gotham, sans-serif' }}
             >
               Return to Sir Isaac
             </Button>
@@ -532,40 +379,42 @@ const SirIsaacGame = () => {
   // CEO Shrine Component
   const CEOShrine = () => (
     <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 z-50 flex items-center justify-center p-4">
-      <Card className="max-w-4xl w-full bg-gradient-to-br from-amber-50 to-orange-100 border-4 border-amber-300 shadow-2xl">
+      <Card className="max-w-4xl w-full bg-gradient-to-br from-[hsl(var(--pitman-gold))] to-[hsl(var(--pitman-orange))] border-4 border-[hsl(var(--pitman-gold))] shadow-2xl">
         <CardContent className="p-8 text-center">
-          <h2 className="text-4xl font-bold text-amber-800 mb-6">🌟 The Darryl Simsovic Executive Shrine 🌟</h2>
+          <h2 className="text-4xl font-bold text-[hsl(var(--pitman-dark-blue))] mb-6" style={{ fontFamily: 'Gotham, sans-serif' }}>
+            🌟 The Darryl Simsovic Executive Shrine 🌟
+          </h2>
           <div className="mb-6">
             <div 
               onClick={handleCEOClick}
-              className="w-64 h-64 mx-auto bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300 shadow-2xl relative overflow-hidden"
+              className="w-64 h-64 mx-auto bg-gradient-to-br from-[hsl(var(--pitman-orange))] to-[hsl(var(--pitman-gold))] flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300 shadow-2xl relative overflow-hidden"
             >
               <img 
                 src="https://www.pitman-training.com/wp-content/uploads/2023/10/Darryl-Simsovic-LaunchLife-CEO-Franchise-Expert.jpg"
                 alt="Darryl Simsovic"
-                className="w-60 h-60 rounded-full object-cover border-4 border-white"
+                className="w-60 h-60 object-cover border-4 border-white"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-amber-500/30 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--pitman-orange))]/30 to-transparent"></div>
             </div>
           </div>
-          <p className="text-xl text-amber-800 mb-4 font-semibold">
+          <p className="text-xl text-[hsl(var(--pitman-dark-blue))] mb-4 font-semibold" style={{ fontFamily: 'Gotham, sans-serif' }}>
             Darryl Simsovic - LaunchLife CEO & Franchise Whisperer
           </p>
-          <p className="text-lg text-amber-700 mb-6">
+          <p className="text-lg text-[hsl(var(--pitman-dark-blue))] mb-6" style={{ fontFamily: 'Gotham, sans-serif' }}>
             The visionary who built training empires across 31 countries. Click the shrine for executive wisdom!
           </p>
-          <div className="grid md:grid-cols-3 gap-4 mb-6 text-sm text-amber-600">
-            <div className="p-3 bg-white/50 rounded-lg">
-              <div className="font-bold text-lg text-amber-800">31+</div>
-              <div>Countries Conquered</div>
+          <div className="grid md:grid-cols-3 gap-4 mb-6 text-sm text-[hsl(var(--pitman-dark-blue))]">
+            <div className="p-3 bg-white/50">
+              <div className="font-bold text-lg text-[hsl(var(--pitman-dark-blue))]" style={{ fontFamily: 'Gotham, sans-serif' }}>31+</div>
+              <div style={{ fontFamily: 'Gotham, sans-serif' }}>Countries Conquered</div>
             </div>
-            <div className="p-3 bg-white/50 rounded-lg">
-              <div className="font-bold text-lg text-amber-800">200+</div>
-              <div>Franchises Launched</div>
+            <div className="p-3 bg-white/50">
+              <div className="font-bold text-lg text-[hsl(var(--pitman-dark-blue))]" style={{ fontFamily: 'Gotham, sans-serif' }}>200+</div>
+              <div style={{ fontFamily: 'Gotham, sans-serif' }}>Franchises Launched</div>
             </div>
-            <div className="p-3 bg-white/50 rounded-lg">
-              <div className="font-bold text-lg text-amber-800">∞</div>
-              <div>Executive Wisdom</div>
+            <div className="p-3 bg-white/50">
+              <div className="font-bold text-lg text-[hsl(var(--pitman-dark-blue))]" style={{ fontFamily: 'Gotham, sans-serif' }}>∞</div>
+              <div style={{ fontFamily: 'Gotham, sans-serif' }}>Executive Wisdom</div>
             </div>
           </div>
           <Button 
@@ -574,7 +423,8 @@ const SirIsaacGame = () => {
               setShowCEOPortal(false);
               toast.success('Returned from the Executive Dimension. That was legendary! 👑');
             }}
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+            style={{ fontFamily: 'Gotham, sans-serif' }}
           >
             Exit CEO Shrine
           </Button>
@@ -583,367 +433,38 @@ const SirIsaacGame = () => {
     </div>
   );
 
-  // Skill Gap Analyzer Results Component
-  const SkillGapResults = () => (
-    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 p-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Your Skill Gap Analysis</h1>
-          <p className="text-slate-300 text-lg">Powered by Pitman Training's Career Intelligence</p>
-        </div>
-
-        {/* Overall Score */}
-        <Card className="mb-8 bg-white/95 backdrop-blur-sm shadow-xl border-2 border-amber-200">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Career Compatibility Score</CardTitle>
-            <div className={`text-6xl font-bold ${getScoreColor(skillResult!.overallScore)}`}>
-              {skillResult!.overallScore}%
-            </div>
-            <Progress value={skillResult!.overallScore} className="w-full max-w-md mx-auto mt-4" />
-            <p className="text-slate-600 mt-2">
-              {skillResult!.overallScore >= 80 ? "Excellent match! You're ready to excel." :
-               skillResult!.overallScore >= 60 ? "Good foundation with room for strategic improvement." :
-               "Great potential! Our training will bridge the gaps perfectly."}
-            </p>
-          </CardHeader>
-        </Card>
-
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          {/* Strengths */}
-          <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-2 border-green-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-green-700">
-                <CheckCircle className="w-5 h-5" />
-                Your Career Strengths
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
-                {skillResult!.strengths.map((strength, index) => (
-                  <li key={index} className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-600" />
-                    <span className="capitalize">{strength}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-
-          {/* Skill Gaps */}
-          <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-2 border-amber-200">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-amber-700">
-                <Target className="w-5 h-5" />
-                Growth Opportunities
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
-                {skillResult!.gaps.map((gap, index) => (
-                  <li key={index} className="flex items-center gap-2">
-                    <Target className="w-4 h-4 text-amber-600" />
-                    <span className="capitalize">{gap}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recommendations */}
-        <Card className="mb-8 bg-white/95 backdrop-blur-sm shadow-xl border-2 border-blue-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BookOpen className="w-5 h-5" />
-              Your Personalized Pitman Training Pathway
-            </CardTitle>
-            <p className="text-slate-600">These courses are specifically selected based on your career goals and current skill set.</p>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {skillResult!.recommendations.map((rec, index) => (
-                <div key={index} className="p-6 border-2 border-slate-200 rounded-lg hover:border-amber-300 transition-colors">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-semibold text-xl">{rec.course}</h3>
-                    <Badge className={getPriorityColor(rec.priority)}>
-                      {rec.priority} priority
-                    </Badge>
-                  </div>
-                  <p className="text-slate-600 mb-4">{rec.reason}</p>
-                  <div className="flex gap-3">
-                    <Button className="bg-amber-600 hover:bg-amber-700">
-                      Request Course Info <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                    <Button variant="outline" className="border-amber-300 text-amber-700">
-                      View Curriculum
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Lead Capture Confirmation */}
-        <Card className="mb-8 bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200">
-          <CardContent className="p-6 text-center">
-            <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-green-800 mb-2">We've Got Your Details!</h3>
-            <p className="text-green-700 mb-4">
-              Our career advisors will contact you within 24 hours to discuss your personalized training pathway.
-            </p>
-            <p className="text-sm text-green-600">
-              Email sent to: <strong>{skillFormData.email}</strong>
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Action Buttons */}
-        <div className="text-center space-y-4">
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Button 
-              onClick={() => {
-                setSkillResult(null);
-                setShowSkillForm(true);
-                setSkillFormData({
-                  jobTitle: '',
-                  industry: '',
-                  experience: '',
-                  currentSkills: '',
-                  desiredRole: '',
-                  jobRequirements: '',
-                  name: '',
-                  email: '',
-                  phone: ''
-                });
-              }}
-              variant="outline"
-              className="border-amber-300 text-amber-300 hover:bg-amber-900/20"
-            >
-              Analyze Another Role
-            </Button>
-            <Button className="bg-amber-600 hover:bg-amber-700">
-              Speak to an Advisor Now
-            </Button>
-            <Button 
-              onClick={() => setShowSkillAnalyzer(false)}
-              variant="outline"
-              className="border-slate-400 text-slate-300 hover:bg-slate-700"
-            >
-              Back to Sir Isaac
-            </Button>
-          </div>
-          
-          <p className="text-slate-400 text-sm">
-            🔒 Your information is secure and will only be used to provide career guidance.
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-
-  // Main Skill Gap Analyzer Component
-  const SkillGapAnalyzer = () => (
-    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 p-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Professional Skill Gap Analyzer</h1>
-          <p className="text-slate-300 text-lg">Get your personalized career development roadmap in under 3 minutes</p>
-          <div className="flex justify-center gap-4 mt-4">
-            <Badge variant="secondary" className="bg-green-600 text-white">✓ 100% Free</Badge>
-            <Badge variant="secondary" className="bg-blue-600 text-white">✓ Instant Results</Badge>
-            <Badge variant="secondary" className="bg-purple-600 text-white">✓ Expert Guidance</Badge>
-          </div>
-        </div>
-
-        <Card className="bg-white/95 backdrop-blur-sm shadow-xl border-2 border-amber-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="w-5 h-5" />
-              Career Analysis & Lead Capture
-            </CardTitle>
-            <p className="text-slate-600">Complete this form to receive your personalized analysis and speak with our career advisors.</p>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Contact Information First */}
-            <div className="p-4 bg-amber-50 border-2 border-amber-200 rounded-lg">
-              <h3 className="font-semibold text-amber-800 mb-3 flex items-center gap-2">
-                <User className="w-4 h-4" />
-                Your Contact Details (Required)
-              </h3>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700">Full Name *</label>
-                  <Input
-                    placeholder="e.g., Sarah Johnson"
-                    value={skillFormData.name}
-                    onChange={(e) => setSkillFormData({...skillFormData, name: e.target.value})}
-                    className="border-amber-300 focus:border-amber-500"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700">Email Address *</label>
-                  <Input
-                    type="email"
-                    placeholder="sarah@example.com"
-                    value={skillFormData.email}
-                    onChange={(e) => setSkillFormData({...skillFormData, email: e.target.value})}
-                    className="border-amber-300 focus:border-amber-500"
-                  />
-                </div>
-              </div>
-              <div className="mt-4">
-                <label className="text-sm font-semibold text-slate-700">Phone Number</label>
-                <Input
-                  type="tel"
-                  placeholder="07123 456789"
-                  value={skillFormData.phone}
-                  onChange={(e) => setSkillFormData({...skillFormData, phone: e.target.value})}
-                  className="border-amber-300 focus:border-amber-500"
-                />
-              </div>
-            </div>
-
-            {/* Career Information */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                  <Briefcase className="w-4 h-4" />
-                  Current Job Title *
-                </label>
-                <Input
-                  placeholder="e.g., Marketing Assistant"
-                  value={skillFormData.jobTitle}
-                  onChange={(e) => setSkillFormData({...skillFormData, jobTitle: e.target.value})}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-700">Industry</label>
-                <Input
-                  placeholder="e.g., Digital Marketing, Healthcare"
-                  value={skillFormData.industry}
-                  onChange={(e) => setSkillFormData({...skillFormData, industry: e.target.value})}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700">Years of Experience</label>
-              <Input
-                placeholder="e.g., 2 years, Entry level, 5+ years"
-                value={skillFormData.experience}
-                onChange={(e) => setSkillFormData({...skillFormData, experience: e.target.value})}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700">Current Skills *</label>
-              <Textarea
-                placeholder="List your current skills, separated by commas (e.g., Microsoft Office, customer service, social media management, teamwork)"
-                value={skillFormData.currentSkills}
-                onChange={(e) => setSkillFormData({...skillFormData, currentSkills: e.target.value})}
-                rows={3}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700">Desired Role *</label>
-              <Input
-                placeholder="e.g., Digital Marketing Manager, Project Coordinator"
-                value={skillFormData.desiredRole}
-                onChange={(e) => setSkillFormData({...skillFormData, desiredRole: e.target.value})}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-slate-700">Job Requirements</label>
-              <Textarea
-                placeholder="List the requirements for your desired role, separated by commas (e.g., Google Ads, project management, leadership, advanced Excel)"
-                value={skillFormData.jobRequirements}
-                onChange={(e) => setSkillFormData({...skillFormData, jobRequirements: e.target.value})}
-                rows={3}
-              />
-            </div>
-
-            <div className="flex justify-center pt-4">
-              <Button 
-                onClick={analyzeSkillGap}
-                disabled={isAnalyzing}
-                className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-4 text-lg font-semibold"
-              >
-                {isAnalyzing ? 'Analyzing Your Skills...' : 'Get My Free Analysis & Speak to an Advisor'}
-              </Button>
-            </div>
-
-            {isAnalyzing && (
-              <div className="text-center">
-                <div className="flex justify-center items-center gap-2 text-amber-600">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-amber-600"></div>
-                  <span>Analyzing your career profile and matching with our training programmes...</span>
-                </div>
-              </div>
-            )}
-
-            <div className="text-center text-xs text-slate-500 border-t pt-4">
-              <p>🔒 Your information is secure. By submitting this form, you agree to be contacted by Pitman Training career advisors.</p>
-              <p className="mt-1">We respect your privacy and will never share your details with third parties.</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="text-center mt-6">
-          <Button 
-            onClick={() => setShowSkillAnalyzer(false)}
-            variant="outline"
-            className="border-slate-400 text-slate-300 hover:bg-slate-700"
-          >
-            Back to Sir Isaac
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-
-  // Render skill analyzer results if completed
-  if (showSkillAnalyzer && !showSkillForm && skillResult) {
-    return <SkillGapResults />;
-  }
-
-  // Render skill analyzer form
-  if (showSkillAnalyzer) {
-    return <SkillGapAnalyzer />;
-  }
-
   // Intro screen rendering logic
   if (showIntro) {
     const personality = getCurrentPersonality();
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 flex items-center justify-center p-4">
-        <Card className="max-w-4xl w-full bg-white/95 backdrop-blur-sm shadow-2xl border-2 border-amber-200">
+      <div className="min-h-screen bg-gradient-to-br from-[hsl(var(--pitman-dark-blue))] via-[hsl(var(--pitman-light-blue))] to-[hsl(var(--pitman-dark-blue))] flex items-center justify-center p-4">
+        <Card className="max-w-4xl w-full bg-white/95 backdrop-blur-sm shadow-2xl border-2 border-[hsl(var(--pitman-gold))]">
           <CardContent className="p-8">
             {!showModeSelection ? (
-              // Initial intro screen - only show Isaac initially
+              // Initial intro screen
               <div className="text-center">
                 <div className="mb-6">
                   <img 
                     src={getCurrentImage()}
                     alt="Sir Isaac Pitman ready to help"
-                    className="w-64 h-auto mx-auto rounded-lg border-4 border-amber-300 shadow-lg object-cover"
+                    className="w-64 h-auto mx-auto border-4 border-[hsl(var(--pitman-gold))] shadow-lg object-cover"
                   />
                 </div>
-                <h1 className="text-3xl font-bold text-slate-800 mb-4">{personality.title}</h1>
-                <p className="text-lg text-slate-700 italic mb-6 leading-relaxed">
+                <h1 className="text-3xl font-bold text-[hsl(var(--pitman-dark-blue))] mb-4" style={{ fontFamily: 'Gotham, sans-serif' }}>
+                  {personality.title}
+                </h1>
+                <p className="text-lg text-[hsl(var(--pitman-dark-blue))]/80 italic mb-6 leading-relaxed" style={{ fontFamily: 'Gotham, sans-serif' }}>
                   {personality.text1}
                 </p>
-                <p className="text-lg text-slate-700 italic mb-8 leading-relaxed">
+                <p className="text-lg text-[hsl(var(--pitman-dark-blue))]/80 italic mb-8 leading-relaxed" style={{ fontFamily: 'Gotham, sans-serif' }}>
                   {personality.text2}
                 </p>
                 
                 <Button 
                   onClick={() => setShowModeSelection(true)}
-                  className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 text-lg font-semibold"
+                  className="bg-[hsl(var(--pitman-orange))] hover:bg-[hsl(var(--pitman-orange))]/90 text-white px-8 py-3 text-lg font-semibold"
+                  style={{ fontFamily: 'Gotham, sans-serif' }}
                 >
                   Choose Your Mode
                 </Button>
@@ -951,7 +472,7 @@ const SirIsaacGame = () => {
             ) : (
               // Mode selection screen
               <div className="text-center">
-                <h2 className="text-2xl font-bold text-slate-800 mb-6">
+                <h2 className="text-2xl font-bold text-[hsl(var(--pitman-dark-blue))] mb-6" style={{ fontFamily: 'Gotham, sans-serif' }}>
                   Choose Sir Isaac's Personality Mode
                 </h2>
                 
@@ -963,9 +484,10 @@ const SirIsaacGame = () => {
                       variant={selectedMode === mode ? 'default' : 'outline'}
                       className={`p-4 h-auto flex flex-col ${
                         selectedMode === mode 
-                          ? 'bg-amber-600 hover:bg-amber-700 text-white' 
-                          : 'border-amber-300 text-amber-700 hover:bg-amber-50'
+                          ? 'bg-[hsl(var(--pitman-orange))] hover:bg-[hsl(var(--pitman-orange))]/90 text-white' 
+                          : 'border-[hsl(var(--pitman-orange))] text-[hsl(var(--pitman-orange))] hover:bg-[hsl(var(--pitman-orange))]/10'
                       }`}
+                      style={{ fontFamily: 'Gotham, sans-serif' }}
                     >
                       <span className="font-semibold capitalize">{mode}</span>
                       <span className="text-sm mt-1 opacity-80">
@@ -982,7 +504,8 @@ const SirIsaacGame = () => {
                 
                 <Button 
                   onClick={() => setShowIntro(false)}
-                  className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-3 text-lg font-semibold"
+                  className="bg-[hsl(var(--pitman-orange))] hover:bg-[hsl(var(--pitman-orange))]/90 text-white px-8 py-3 text-lg font-semibold"
+                  style={{ fontFamily: 'Gotham, sans-serif' }}
                 >
                   {getCurrentPersonality().ctaText}
                 </Button>
@@ -999,29 +522,23 @@ const SirIsaacGame = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[hsl(var(--pitman-dark-blue))] via-[hsl(var(--pitman-light-blue))] to-[hsl(var(--pitman-dark-blue))] p-4">
       <div className="max-w-4xl mx-auto">
         {/* Header with navigation */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-4xl font-bold text-white mb-2" style={{ fontFamily: 'Gotham, sans-serif' }}>
             Ask {selectedCharacter === 'isaac' ? 'Sir Isaac' : 'Paul Lewis'}
           </h1>
-          <p className="text-slate-300 text-lg">
+          <p className="text-white/80 text-lg" style={{ fontFamily: 'Gotham, sans-serif' }}>
             {selectedCharacter === 'isaac' ? 'The Wise Victorian Oracle' : 'The Marathon Man & Managing Director'}
           </p>
-          <div className="flex justify-center gap-2 mt-4">
-            <Badge variant="secondary" className="mt-2">
+          <div className="flex justify-center gap-2 mt-4 flex-wrap">
+            <Badge variant="secondary" className="mt-2 bg-[hsl(var(--pitman-gold))] text-[hsl(var(--pitman-dark-blue))]">
               Questions Asked: {questionsAsked}
             </Badge>
-            <Badge variant="secondary" className="mt-2">
+            <Badge variant="secondary" className="mt-2 bg-[hsl(var(--pitman-gold))] text-[hsl(var(--pitman-dark-blue))]">
               Mode: {selectedMode.charAt(0).toUpperCase() + selectedMode.slice(1)}
             </Badge>
-            <Button
-              onClick={() => setShowSkillAnalyzer(true)}
-              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 text-sm"
-            >
-              🎯 Free Skill Analysis
-            </Button>
           </div>
         </div>
 
@@ -1031,7 +548,7 @@ const SirIsaacGame = () => {
             <img 
               src={getCurrentImage()}
               alt={`${selectedCharacter === 'isaac' ? 'Sir Isaac Pitman' : 'Paul Lewis'} in ${selectedMode} mode`}
-              className="w-80 h-auto mx-auto rounded-lg border-6 border-amber-300 shadow-2xl object-cover cursor-pointer"
+              className="w-80 h-auto mx-auto border-6 border-[hsl(var(--pitman-gold))] shadow-2xl object-cover cursor-pointer"
               onClick={() => {
                 if (!isThinking) {
                   const characterNames = { isaac: 'Sir Isaac', paul: 'Paul Lewis' };
@@ -1043,14 +560,14 @@ const SirIsaacGame = () => {
           
           {isThinking && (
             <div className="mt-4">
-              <p className="text-amber-300 text-lg italic animate-pulse">
+              <p className="text-[hsl(var(--pitman-gold))] text-lg italic animate-pulse" style={{ fontFamily: 'Gotham, sans-serif' }}>
                 {selectedCharacter === 'isaac' ? 'Sir Isaac' : 'Paul Lewis'} is pondering...
               </p>
               <div className="flex justify-center mt-2">
                 <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-amber-300 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-amber-300 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                  <div className="w-2 h-2 bg-amber-300 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  <div className="w-2 h-2 bg-[hsl(var(--pitman-gold))] animate-bounce"></div>
+                  <div className="w-2 h-2 bg-[hsl(var(--pitman-gold))] animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                  <div className="w-2 h-2 bg-[hsl(var(--pitman-gold))] animate-bounce" style={{animationDelay: '0.2s'}}></div>
                 </div>
               </div>
             </div>
@@ -1058,18 +575,19 @@ const SirIsaacGame = () => {
         </div>
 
         {/* Question Input */}
-        <Card className="mb-8 bg-white/95 backdrop-blur-sm shadow-xl border-2 border-amber-200">
+        <Card className="mb-8 bg-white/95 backdrop-blur-sm shadow-xl border-2 border-[hsl(var(--pitman-gold))]">
           <CardContent className="p-6">
             <div className="space-y-4">
               <div>
-                <label className="block text-slate-700 font-semibold mb-2">
+                <label className="block text-[hsl(var(--pitman-dark-blue))] font-semibold mb-2" style={{ fontFamily: 'Gotham, sans-serif' }}>
                   Pose your question to {selectedCharacter === 'isaac' ? 'Sir Isaac' : 'Paul Lewis'}:
                 </label>
                 <Input
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
                   placeholder="What wisdom do you seek, dear enquirer?"
-                  className="text-lg p-4 border-2 border-amber-200 focus:border-amber-400"
+                  className="text-lg p-4 border-2 border-[hsl(var(--pitman-gold))] focus:border-[hsl(var(--pitman-orange))]"
+                  style={{ fontFamily: 'Gotham, sans-serif' }}
                   onKeyPress={(e) => e.key === 'Enter' && !isThinking && askQuestion()}
                   disabled={isThinking}
                 />
@@ -1079,7 +597,8 @@ const SirIsaacGame = () => {
                 <Button 
                   onClick={askQuestion}
                   disabled={isThinking || !question.trim()}
-                  className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 font-semibold"
+                  className="bg-[hsl(var(--pitman-orange))] hover:bg-[hsl(var(--pitman-orange))]/90 text-white px-6 py-3 font-semibold"
+                  style={{ fontFamily: 'Gotham, sans-serif' }}
                 >
                   {isThinking ? 'Pondering...' : (selectedCharacter === 'isaac' ? 'Spill the Tea ☕' : 'Get Marathon Wisdom 🏃‍♂️')}
                 </Button>
@@ -1087,7 +606,8 @@ const SirIsaacGame = () => {
                 <Button 
                   onClick={resetGame}
                   variant="outline"
-                  className="border-amber-300 text-amber-700 hover:bg-amber-50"
+                  className="border-[hsl(var(--pitman-orange))] text-[hsl(var(--pitman-orange))] hover:bg-[hsl(var(--pitman-orange))]/10"
+                  style={{ fontFamily: 'Gotham, sans-serif' }}
                 >
                   <RotateCcw className="w-4 h-4 mr-2" />
                   Ask Again
@@ -1099,24 +619,24 @@ const SirIsaacGame = () => {
 
         {/* Response Display */}
         {currentResponse && (
-          <Card className="mb-8 bg-white/95 backdrop-blur-sm shadow-xl border-2 border-amber-200 animate-fade-in">
+          <Card className="mb-8 bg-white/95 backdrop-blur-sm shadow-xl border-2 border-[hsl(var(--pitman-gold))] animate-fade-in">
             <CardContent className="p-6">
               <div className="text-center">
                 <Badge className="mb-4 bg-green-100 text-green-800 border-green-200">
                   {selectedMode.charAt(0).toUpperCase() + selectedMode.slice(1)} Wisdom
                 </Badge>
                 
-                <blockquote className="text-xl text-slate-800 italic font-medium mb-4 leading-relaxed">
+                <blockquote className="text-xl text-[hsl(var(--pitman-dark-blue))] italic font-medium mb-4 leading-relaxed" style={{ fontFamily: 'Gotham, sans-serif' }}>
                   "{currentResponse.text}"
                 </blockquote>
                 
-                <p className="text-slate-600 font-semibold">
+                <p className="text-[hsl(var(--pitman-dark-blue))]/70 font-semibold" style={{ fontFamily: 'Gotham, sans-serif' }}>
                   — {selectedCharacter === 'isaac' ? 'Sir Isaac Pitman' : 'Paul Lewis'}
                 </p>
                 
                 {currentResponse.funFact && (
-                  <div className="mt-6 p-4 bg-amber-50 border-l-4 border-amber-400 rounded-r-lg">
-                    <p className="text-amber-800 italic">
+                  <div className="mt-6 p-4 bg-[hsl(var(--pitman-gold))]/10 border-l-4 border-[hsl(var(--pitman-gold))]">
+                    <p className="text-[hsl(var(--pitman-dark-blue))] italic" style={{ fontFamily: 'Gotham, sans-serif' }}>
                       💡 {currentResponse.funFact}
                     </p>
                   </div>
@@ -1127,12 +647,13 @@ const SirIsaacGame = () => {
         )}
 
         {/* Footer Controls */}
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-center gap-4 flex-wrap">
           <Button
             onClick={() => setSoundEnabled(!soundEnabled)}
             variant="outline"
             size="sm"
-            className="border-slate-400 text-slate-300 hover:bg-slate-700"
+            className="border-white/40 text-white/80 hover:bg-white/10"
+            style={{ fontFamily: 'Gotham, sans-serif' }}
           >
             {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
           </Button>
@@ -1144,7 +665,8 @@ const SirIsaacGame = () => {
             )}
             variant="outline"
             size="sm"
-            className="border-slate-400 text-slate-300 hover:bg-slate-700"
+            className="border-white/40 text-white/80 hover:bg-white/10"
+            style={{ fontFamily: 'Gotham, sans-serif' }}
           >
             <Info className="w-4 h-4 mr-2" />
             Who is {selectedCharacter === 'isaac' ? 'Sir Isaac' : 'Paul Lewis'}?
@@ -1154,7 +676,8 @@ const SirIsaacGame = () => {
             onClick={() => setShowModeSelection(true)}
             variant="outline"
             size="sm"
-            className="border-slate-400 text-slate-300 hover:bg-slate-700"
+            className="border-white/40 text-white/80 hover:bg-white/10"
+            style={{ fontFamily: 'Gotham, sans-serif' }}
           >
             Change Mode
           </Button>
