@@ -199,6 +199,15 @@ const pitmanResponses = {
   }
 };
 
+// CEO responses for the CEO Easter Egg
+const ceoResponses = [
+  'The franchise whisperer acknowledges your presence with executive precision.',
+  'Darryl Simsovic radiates CEO energy that could power a small country.',
+  'You\'ve clicked on greatness itself. The LaunchLife legend smiles with approval.',
+  'The man who built empires across 31 countries nods with strategic satisfaction.',
+  'Pure executive charisma flows through your screen. That\'s the Darryl effect!'
+];
+
 interface GameResponse {
   text: string;
   type: 'affirmative' | 'negative' | 'playful' | 'profound' | 'meta';
@@ -219,6 +228,8 @@ const SirIsaacGame = () => {
   const [selectedMode, setSelectedMode] = useState<Mode>('classic');
   const [showModeSelection, setShowModeSelection] = useState(false);
   const [sirIsaacMood, setSirIsaacMood] = useState<'waiting' | 'thinking' | 'answering'>('waiting');
+  const [showCEOPortal, setShowCEOPortal] = useState(false);
+  const [showCEOShrine, setShowCEOShrine] = useState(false);
 
   const askQuestion = async () => {
     if (!question.trim()) {
@@ -229,6 +240,18 @@ const SirIsaacGame = () => {
 
     // Check for Easter eggs
     const lowerQuestion = question.toLowerCase();
+    
+    // CEO Easter Egg Detection
+    const ceoTriggers = ['darryl', 'darryl simsovic', 'ceo', 'launchlife ceo', 'launchlife'];
+    const triggeredCEOMode = ceoTriggers.some(trigger => lowerQuestion.includes(trigger));
+    
+    if (triggeredCEOMode) {
+      setShowCEOPortal(true);
+      toast.success('👑 CEO PORTAL ACTIVATED! Welcome to the Executive Stratosphere! 👑');
+      return;
+    }
+
+    // Paul Lewis Easter Egg Detection
     const paulTriggers = ['paul', 'paul lewis', 'managing director'];
     const triggeredPaulMode = paulTriggers.some(trigger => lowerQuestion.includes(trigger));
 
@@ -250,7 +273,7 @@ const SirIsaacGame = () => {
 
     setCurrentResponse({
       text: randomResponse,
-      type: 'affirmative' // You can enhance this to detect response type
+      type: 'affirmative'
     });
     
     setIsThinking(false);
@@ -299,6 +322,75 @@ const SirIsaacGame = () => {
     }
   };
 
+  const handleCEOClick = () => {
+    const randomResponse = ceoResponses[Math.floor(Math.random() * ceoResponses.length)];
+    toast.success(randomResponse);
+  };
+
+  // CEO Portal Component
+  const CEOPortal = () => (
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <Card className="max-w-2xl w-full bg-gradient-to-br from-amber-50 to-orange-100 border-4 border-amber-300 shadow-2xl">
+        <CardContent className="p-8 text-center">
+          <h2 className="text-3xl font-bold text-amber-800 mb-4">👑 CEO PORTAL ACTIVATED! 👑</h2>
+          <p className="text-lg text-amber-700 mb-6">
+            Welcome to the Executive Stratosphere! You've discovered the legendary Darryl Simsovic Easter Egg!
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Button 
+              onClick={() => setShowCEOShrine(true)}
+              className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700"
+            >
+              Enter CEO Shrine
+            </Button>
+            <Button 
+              onClick={() => setShowCEOPortal(false)}
+              variant="outline"
+              className="border-amber-300 text-amber-700"
+            >
+              Return to Sir Isaac
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  // CEO Shrine Component
+  const CEOShrine = () => (
+    <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 z-50 flex items-center justify-center p-4">
+      <Card className="max-w-4xl w-full bg-gradient-to-br from-amber-50 to-orange-100 border-4 border-amber-300 shadow-2xl">
+        <CardContent className="p-8 text-center">
+          <h2 className="text-4xl font-bold text-amber-800 mb-6">🌟 The Darryl Simsovic Executive Shrine 🌟</h2>
+          <div className="mb-6">
+            <div 
+              onClick={handleCEOClick}
+              className="w-64 h-64 mx-auto bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center cursor-pointer hover:scale-110 transition-transform duration-300 shadow-2xl"
+            >
+              <span className="text-6xl">👑</span>
+            </div>
+          </div>
+          <p className="text-xl text-amber-800 mb-4 font-semibold">
+            Darryl Simsovic - LaunchLife CEO & Franchise Whisperer
+          </p>
+          <p className="text-lg text-amber-700 mb-6">
+            The man who built empires across 31 countries. Click the crown for executive wisdom!
+          </p>
+          <Button 
+            onClick={() => {
+              setShowCEOShrine(false);
+              setShowCEOPortal(false);
+              toast.success('Returned from the Executive Dimension. That was legendary! 👑');
+            }}
+            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+          >
+            Exit CEO Shrine
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
   if (showIntro) {
     const personality = getCurrentPersonality();
     
@@ -307,12 +399,12 @@ const SirIsaacGame = () => {
         <Card className="max-w-4xl w-full bg-white/95 backdrop-blur-sm shadow-2xl border-2 border-amber-200">
           <CardContent className="p-8">
             {!showModeSelection ? (
-              // Initial intro screen
+              // Initial intro screen - only show Isaac initially
               <div className="text-center">
                 <div className="mb-6">
                   <img 
                     src={getCurrentImage()}
-                    alt={`${selectedCharacter === 'isaac' ? 'Sir Isaac Pitman' : 'Paul Lewis'} ready to help`}
+                    alt="Sir Isaac Pitman ready to help"
                     className="w-64 h-auto mx-auto rounded-lg border-4 border-amber-300 shadow-lg object-cover"
                   />
                 </div>
@@ -323,27 +415,6 @@ const SirIsaacGame = () => {
                 <p className="text-lg text-slate-700 italic mb-8 leading-relaxed">
                   {personality.text2}
                 </p>
-                
-                {/* Character Selection */}
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-slate-800 mb-4">Choose Your Advisor:</h3>
-                  <div className="flex gap-4 justify-center">
-                    <Button
-                      onClick={() => setSelectedCharacter('isaac')}
-                      variant={selectedCharacter === 'isaac' ? 'default' : 'outline'}
-                      className={selectedCharacter === 'isaac' ? 'bg-amber-600 hover:bg-amber-700' : 'border-amber-300 text-amber-700 hover:bg-amber-50'}
-                    >
-                      Sir Isaac Pitman
-                    </Button>
-                    <Button
-                      onClick={() => setSelectedCharacter('paul')}
-                      variant={selectedCharacter === 'paul' ? 'default' : 'outline'}
-                      className={selectedCharacter === 'paul' ? 'bg-amber-600 hover:bg-amber-700' : 'border-amber-300 text-amber-700 hover:bg-amber-50'}
-                    >
-                      Paul Lewis
-                    </Button>
-                  </div>
-                </div>
                 
                 <Button 
                   onClick={() => setShowModeSelection(true)}
@@ -356,7 +427,7 @@ const SirIsaacGame = () => {
               // Mode selection screen
               <div className="text-center">
                 <h2 className="text-2xl font-bold text-slate-800 mb-6">
-                  Choose {selectedCharacter === 'isaac' ? 'Sir Isaac\'s' : 'Paul\'s'} Personality Mode
+                  Choose Sir Isaac's Personality Mode
                 </h2>
                 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
@@ -394,6 +465,10 @@ const SirIsaacGame = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* CEO Portal and Shrine */}
+        {showCEOPortal && <CEOPortal />}
+        {showCEOShrine && <CEOShrine />}
       </div>
     );
   }
@@ -552,6 +627,10 @@ const SirIsaacGame = () => {
           </Button>
         </div>
       </div>
+
+      {/* CEO Portal and Shrine */}
+      {showCEOPortal && <CEOPortal />}
+      {showCEOShrine && <CEOShrine />}
     </div>
   );
 };
